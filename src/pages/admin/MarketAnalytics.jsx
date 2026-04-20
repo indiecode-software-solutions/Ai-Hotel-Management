@@ -346,6 +346,21 @@ const MarketAnalytics = () => {
           >
             {isGlobe ? <MapIcon size={20} /> : <Globe size={20} />}
           </button>
+          
+          <button 
+            onClick={() => chartRef.current && chartRef.current.goHome()}
+            className="w-12 h-12 flex items-center justify-center text-white transition-all shadow-lg group"
+            style={{ 
+              borderRadius: '12px', 
+              background: 'rgba(15, 23, 42, 0.8)', 
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              cursor: 'pointer'
+            }}
+            title="Recenter Map"
+          >
+            <Navigation size={20} />
+          </button>
         </div>
 
         <div className="absolute bottom-8 right-8 z-10">

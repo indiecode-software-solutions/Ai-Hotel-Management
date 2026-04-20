@@ -149,6 +149,25 @@ const OasisGlobe = ({ properties }) => {
       })
     }));
 
+    // Recenter Button
+    var homeButton = switchCont.children.push(am5.Button.new(root, {
+      width: 32,
+      height: 32,
+      marginLeft: 15,
+      centerY: am5.p50,
+      icon: am5.Graphics.new(root, {
+        svgPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+        fill: am5.color(0xffffff),
+        scale: 0.6,
+        centerX: am5.p50,
+        centerY: am5.p50
+      })
+    }));
+
+    homeButton.on("click", function() {
+      chart.goHome();
+    });
+
     switchButton.get("background").setAll({
       fill: am5.color(0x334155)
     });
