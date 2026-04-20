@@ -1,0 +1,32 @@
+:root {
+  /* SURFACES */
+  --surface-base: #0b0f1a;
+  --surface-elevated: #121826;
+  --surface-overlay: #1b2433;
+  --surface-glass: rgba(255, 255, 255, 0.04);
+
+  /* TEXT */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5f5;
+  --text-muted: #94a3b8;
+  --text-accent: #d4af37;
+
+  /* ACTIONS */
+  --action-primary: #0077b6;
+  --action-primary-hover: #0096c7;
+  --action-secondary: #00b4d8;
+  --action-accent: #d4af37;
+
+  /* BORDERS */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.12);
+
+  /* EFFECTS */
+  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --blur-glass: blur(14px);
+
+  /* GRADIENTS */
+  --gradient-primary: linear-gradient(135deg, #0077b6, #00b4d8);
+  --gradient-accent: linear-gradient(135deg, #d4af37, #c6a85a);
+  --gradient-overlay: linear-gradient(to bottom, rgba(11,15,26,0.5), rgba(11,15,26,0.95));
+}
