@@ -25,7 +25,7 @@ export const Sidebar = () => {
       <div className="px-8 mb-12">
         <h1 className="sidebar-logo">
           <span className="sidebar-logo-icon">✦</span>
-          OASIS
+          OASIS HOSPITALITY
         </h1>
       </div>
 

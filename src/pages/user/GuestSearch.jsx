@@ -106,7 +106,7 @@ const GuestSearch = () => {
       <nav className="search-navbar">
         <Link to="/" className="guest-logo">
           <Globe size={20} />
-          <span>OASIS</span>
+          <span>OASIS HOSPITALITY</span>
         </Link>
         
         <div className="search-navbar-center">

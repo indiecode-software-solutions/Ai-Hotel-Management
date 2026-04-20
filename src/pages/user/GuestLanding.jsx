@@ -98,7 +98,7 @@ const GuestLanding = () => {
         <div className="navbar-left">
           <Link to="/" className="guest-logo">
             <Globe size={20} />
-            <span>OASIS</span>
+            <span>OASIS HOSPITALITY</span>
           </Link>
         </div>
         <div className="navbar-center">

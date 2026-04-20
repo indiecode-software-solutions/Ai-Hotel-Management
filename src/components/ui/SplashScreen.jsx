@@ -62,11 +62,11 @@ const SplashScreen = ({ onStartSplit, onComplete, currentState }) => {
       {/* Centered Logo */}
       <div className={`splash-logo-container ${isSplitting ? 'hidden' : ''}`}>
         <h1 className="splash-logo-text">
-          OASIS
+          OASIS HOSPITALITY
         </h1>
 
         <p className="splash-tagline">
-          Curating Sanctuaries for the Modern Nomad
+          Where Intelligence Meets Elegance
         </p>
       </div>
 
