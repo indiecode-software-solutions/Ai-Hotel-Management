@@ -484,6 +484,7 @@
   height: 100%;
   position: relative;
   overflow: hidden;
+  background-color: #0b0f1a; /* Solid color to prevent homepage peek-through */
   transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1);
   will-change: transform;
 }
@@ -506,7 +507,8 @@
 .splash-door-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(11, 15, 26, 0.4);
+  background: rgba(11, 15, 26, 0.6); /* Slightly darker for better contrast */
+  backdrop-filter: blur(5px); /* Added subtle blur to mask any image loading artifacts */
 }
 
 .splash-logo-container {
