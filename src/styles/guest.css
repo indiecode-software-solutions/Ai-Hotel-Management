@@ -51,7 +51,7 @@
   font-family: 'IBM Plex Serif', serif;
   font-weight: 700;
   font-size: 1.5rem;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   color: var(--text-primary);
   text-decoration: none;
 }
@@ -615,7 +615,7 @@ html {
   font-family: 'IBM Plex Serif', serif;
   font-weight: 700;
   font-size: 1.5rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
 }
 
 .footer-links {
