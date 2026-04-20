@@ -12,12 +12,12 @@ import {
 
 export const Sidebar = () => {
   const navItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
-    { name: 'Bookings', icon: <CalendarDays size={20} />, path: '/bookings' },
-    { name: 'Guests', icon: <Users size={20} />, path: '/guests' },
-    { name: 'Pricing Engine', icon: <Tags size={20} />, path: '/pricing' },
-    { name: 'Reviews', icon: <MessageSquareQuote size={20} />, path: '/reviews' },
-    { name: 'Analytics', icon: <Globe size={20} />, path: '/market-analytics' },
+    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
+    { name: 'Bookings', icon: <CalendarDays size={20} />, path: '/admin/bookings' },
+    { name: 'Guests', icon: <Users size={20} />, path: '/admin/guests' },
+    { name: 'Pricing Engine', icon: <Tags size={20} />, path: '/admin/pricing' },
+    { name: 'Reviews', icon: <MessageSquareQuote size={20} />, path: '/admin/reviews' },
+    { name: 'Analytics', icon: <Globe size={20} />, path: '/admin/market-analytics' },
   ];
 
   return (

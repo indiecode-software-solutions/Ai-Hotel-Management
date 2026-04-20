@@ -17,7 +17,7 @@ import VendorOnboarding from './pages/vendor/VendorOnboarding';
 function AppContent() {
   const [splashState, setSplashState] = useState('visible'); // visible, animating, hidden
   const location = useLocation();
-  const isGuestRoute = location.pathname === '/booking' || location.pathname.startsWith('/booking/');
+  const isAdminRoute = location.pathname.startsWith('/admin');
   const isOnboardingRoute = location.pathname === '/onboarding' || location.pathname.startsWith('/onboarding/');
 
   React.useEffect(() => {
@@ -42,27 +42,26 @@ function AppContent() {
       )}
 
       {/* Put Sidebar at the root - only for Admin routes */}
-      {splashState !== 'visible' && !isGuestRoute && !isOnboardingRoute && <Sidebar />}
+      {splashState !== 'visible' && isAdminRoute && <Sidebar />}
 
-      <div className={isGuestRoute || isOnboardingRoute ? 'guest-app-container' : (splashState === 'hidden' ? 'app-content-stable' : `app-transition-container ${splashState}`)}>
+      <div className={!isAdminRoute && !isOnboardingRoute ? 'guest-app-container' : (splashState === 'hidden' ? 'app-content-stable' : `app-transition-container ${splashState}`)}>
         <Routes>
-          {/* Admin Routes */}
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/bookings" element={<Bookings />} />
-          <Route path="/guests" element={<Guests />} />
-          <Route path="/pricing" element={<PricingEngine />} />
-          <Route path="/pricing-old" element={<Pricing />} />
-          <Route path="/reviews" element={<Reviews />} />
-          <Route path="/market-analytics" element={<MarketAnalytics />} />
-
-          {/* Guest Routes (Renamed to Booking) */}
-          <Route path="/booking" element={<GuestLanding />} />
-          <Route path="/booking/search" element={<GuestSearch />} />
-          <Route path="/booking/*" element={<Navigate to="/booking" replace />} />
+          {/* Guest / Public Routes (Now Root) */}
+          <Route path="/" element={<GuestLanding />} />
+          <Route path="/search" element={<GuestSearch />} />
+          
+          {/* Admin Routes (Now Prefixed) */}
+          <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/bookings" element={<Bookings />} />
+          <Route path="/admin/guests" element={<Guests />} />
+          <Route path="/admin/pricing" element={<PricingEngine />} />
+          <Route path="/admin/reviews" element={<Reviews />} />
+          <Route path="/admin/market-analytics" element={<MarketAnalytics />} />
 
           {/* Vendor Routes */}
           <Route path="/onboarding" element={<VendorOnboarding />} />
 
+          {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
