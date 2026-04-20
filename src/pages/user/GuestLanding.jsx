@@ -83,7 +83,7 @@ const GuestLanding = () => {
 
   const handleAiSearch = async () => {
     if (!aiQuery.trim()) return;
-    navigate(`/guest/search?query=${encodeURIComponent(aiQuery)}`);
+    navigate(`/booking/search?query=${encodeURIComponent(aiQuery)}`);
   };
 
   const openBooking = (hotel) => {
@@ -96,7 +96,7 @@ const GuestLanding = () => {
       {/* Cinematic Navigation */}
       <nav className={`guest-navbar ${scrolled ? 'scrolled' : ''}`}>
         <div className="navbar-left">
-          <Link to="/guest" className="guest-logo">
+          <Link to="/booking" className="guest-logo">
             <Globe size={20} />
             <span>OASIS</span>
           </Link>
@@ -126,7 +126,7 @@ const GuestLanding = () => {
         <div className="menu-backdrop" onClick={() => setIsMenuOpen(false)}></div>
         <div className="menu-content">
           <div className="menu-header">
-            <Link to="/guest" className="guest-logo" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/booking" className="guest-logo" onClick={() => setIsMenuOpen(false)}>
               <Globe size={24} />
               <span>OASIS</span>
             </Link>
@@ -204,10 +204,10 @@ const GuestLanding = () => {
             </div>
 
             <div className="search-suggestions">
-              <button onClick={() => navigate('/guest/search?query=Villas+in+Bali')}>Bali</button>
-              <button onClick={() => navigate('/guest/search?query=Penthouses+in+NYC')}>New York</button>
-              <button onClick={() => navigate('/guest/search?query=Resorts+in+Maldives')}>Maldives</button>
-              <button onClick={() => navigate('/guest/search?query=Suites+in+Paris')}>Paris</button>
+              <button onClick={() => navigate('/booking/search?query=Villas+in+Bali')}>Bali</button>
+              <button onClick={() => navigate('/booking/search?query=Penthouses+in+NYC')}>New York</button>
+              <button onClick={() => navigate('/booking/search?query=Resorts+in+Maldives')}>Maldives</button>
+              <button onClick={() => navigate('/booking/search?query=Suites+in+Paris')}>Paris</button>
             </div>
           </div>
 
@@ -224,7 +224,7 @@ const GuestLanding = () => {
             <span className="section-tag">Our Collection</span>
             <h2 className="section-heading">Hand-picked Excellence</h2>
           </div>
-          <Link to="/guest/search" className="action-link">
+          <Link to="/booking/search" className="action-link">
             Explore All <ArrowRight size={16} />
           </Link>
         </div>

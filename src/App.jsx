@@ -17,7 +17,7 @@ import VendorOnboarding from './pages/vendor/VendorOnboarding';
 function AppContent() {
   const [splashState, setSplashState] = useState('visible'); // visible, animating, hidden
   const location = useLocation();
-  const isGuestRoute = location.pathname === '/guest' || location.pathname.startsWith('/guest/');
+  const isGuestRoute = location.pathname === '/booking' || location.pathname.startsWith('/booking/');
   const isOnboardingRoute = location.pathname === '/onboarding' || location.pathname.startsWith('/onboarding/');
 
   React.useEffect(() => {
@@ -55,10 +55,10 @@ function AppContent() {
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/market-analytics" element={<MarketAnalytics />} />
 
-          {/* Guest Routes */}
-          <Route path="/guest" element={<GuestLanding />} />
-          <Route path="/guest/search" element={<GuestSearch />} />
-          <Route path="/guest/*" element={<Navigate to="/guest" replace />} />
+          {/* Guest Routes (Renamed to Booking) */}
+          <Route path="/booking" element={<GuestLanding />} />
+          <Route path="/booking/search" element={<GuestSearch />} />
+          <Route path="/booking/*" element={<Navigate to="/booking" replace />} />
 
           {/* Vendor Routes */}
           <Route path="/onboarding" element={<VendorOnboarding />} />

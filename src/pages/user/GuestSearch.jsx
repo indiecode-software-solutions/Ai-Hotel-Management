@@ -104,7 +104,7 @@ const GuestSearch = () => {
     <div className="guest-app-container split-view-container">
       {/* Top Navbar */}
       <nav className="search-navbar">
-        <Link to="/guest" className="guest-logo">
+        <Link to="/booking" className="guest-logo">
           <Globe size={20} />
           <span>OASIS</span>
         </Link>
