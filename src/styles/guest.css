@@ -355,6 +355,7 @@ html {
   border-radius: 24px;
   overflow: hidden;
   margin-bottom: 2rem;
+  background-color: #0b0f1a; /* Backup color to prevent bright gaps */
 }
 
 .property-media img {
@@ -416,11 +417,12 @@ html {
 
 .details-header-overlay {
   position: absolute;
-  bottom: 0;
+  bottom: -15px; /* Increased bleed */
   left: 0;
   width: 100%;
-  padding: 3rem 2rem 1.5rem;
-  background: linear-gradient(to top, rgba(11, 15, 26, 0.9) 0%, transparent 100%);
+  padding: 3rem 2rem calc(1.5rem + 15px);
+  /* Solid base transitioning into the gradient to kill any light leaks */
+  background: linear-gradient(to top, #0b0f1a 15px, rgba(11, 15, 26, 0.9) 40px, transparent 100%);
   z-index: 5;
   pointer-events: none;
   transition: transform 0.4s ease;
@@ -901,6 +903,7 @@ html {
 
 .search-property-card {
   background: rgba(255, 255, 255, 0.02);
+  background-color: #0b0f1a; /* Prevent gaps between segments */
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   overflow: hidden;
@@ -1174,6 +1177,7 @@ html {
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.02);
+  background-color: #0b0f1a; /* Prevent gaps between segments */
   border: 1px solid var(--glass-border);
   border-radius: 20px;
   overflow: hidden;
