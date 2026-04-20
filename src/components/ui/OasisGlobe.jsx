@@ -44,7 +44,8 @@ const OasisGlobe = ({ properties }) => {
       homeGeoPoint: { latitude: 0, longitude: 0 },
       wheelY: "zoom",
       wheelX: "none",
-      pinchZoom: true
+      pinchZoom: true,
+      zoomToCenter: true
     }));
 
     // Background fill (ocean)

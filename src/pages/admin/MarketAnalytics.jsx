@@ -38,8 +38,11 @@ const MarketAnalytics = () => {
       rotationY: -20,
       minZoomLevel: 0.9,
       zoomLevel: 0.9,
-      wheelable: true,
-      pinchZoomable: true
+      homeGeoPoint: { latitude: 0, longitude: 0 },
+      wheelY: "zoom",
+      wheelX: "none",
+      pinchZoom: true,
+      zoomToCenter: true
     }));
 
     chartRef.current = chart;
