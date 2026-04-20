@@ -261,7 +261,7 @@ const VendorOnboarding = () => {
             <button 
               className="btn-primary" 
               style={{ margin: '40px auto 0' }}
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/admin')}
             >
               Go to Dashboard
               <i className="material-icons">arrow_forward</i>
