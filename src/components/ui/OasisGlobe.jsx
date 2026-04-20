@@ -38,17 +38,16 @@ const OasisGlobe = ({ properties }) => {
       projection: am5map.geoMercator(),
       rotationX: 0,
       rotationY: 0,
-      minZoomLevel: 1,
-      maxZoomLevel: 32,
+      minZoomLevel: 1.7,
+      maxZoomLevel: 1.7,
       zoomLevel: 1.7,
       homeGeoPoint: { latitude: 0, longitude: 0 },
       homeZoomLevel: 1.7,
       homeRotationX: 0,
       homeRotationY: 0,
-      wheelY: "zoom",
+      wheelY: "none",
       wheelX: "none",
-      pinchZoom: true,
-      zoomToCenter: true
+      pinchZoom: false
     }));
 
     // Background fill (ocean)
@@ -152,25 +151,6 @@ const OasisGlobe = ({ properties }) => {
       })
     }));
 
-    // Recenter Button
-    var homeButton = switchCont.children.push(am5.Button.new(root, {
-      width: 32,
-      height: 32,
-      marginLeft: 15,
-      centerY: am5.p50,
-      icon: am5.Graphics.new(root, {
-        svgPath: "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
-        fill: am5.color(0xffffff),
-        scale: 0.6,
-        centerX: am5.p50,
-        centerY: am5.p50
-      })
-    }));
-
-    homeButton.on("click", function() {
-      chart.goHome(1000);
-    });
-
     switchButton.get("background").setAll({
       fill: am5.color(0x334155)
     });
@@ -187,6 +167,7 @@ const OasisGlobe = ({ properties }) => {
       chart.animate({ key: "rotationY", to: -20, duration: duration, easing: easing });
       bgSeries.mapPolygons.template.set("fillOpacity", 0.8);
       chart.set("minZoomLevel", 0.9);
+      chart.set("maxZoomLevel", 0.9);
       chart.animate({ key: "zoomLevel", to: 0.9, duration: duration, easing: easing });
     }
 
@@ -197,7 +178,8 @@ const OasisGlobe = ({ properties }) => {
       chart.animate({ key: "rotationX", to: 0, duration: duration, easing: easing });
       chart.animate({ key: "rotationY", to: 0, duration: duration, easing: easing });
       bgSeries.mapPolygons.template.set("fillOpacity", 0);
-      chart.set("minZoomLevel", 1);
+      chart.set("minZoomLevel", 1.7);
+      chart.set("maxZoomLevel", 1.7);
       chart.animate({ key: "zoomLevel", to: 1.7, duration: duration, easing: easing });
     }
 

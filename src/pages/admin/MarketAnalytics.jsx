@@ -37,15 +37,15 @@ const MarketAnalytics = () => {
       rotationX: -15,
       rotationY: -20,
       minZoomLevel: 0.9,
+      maxZoomLevel: 0.9,
       zoomLevel: 0.9,
       homeGeoPoint: { latitude: 0, longitude: 0 },
       homeZoomLevel: 0.9,
       homeRotationX: -15,
       homeRotationY: -20,
-      wheelY: "zoom",
+      wheelY: "none",
       wheelX: "none",
-      pinchZoom: true,
-      zoomToCenter: true
+      pinchZoom: false
     }));
 
     chartRef.current = chart;
@@ -278,6 +278,8 @@ const MarketAnalytics = () => {
         chart.set("panY", "translateY");
         chart.animate({ key: "rotationX", to: 0, duration: duration, easing: easing });
         chart.animate({ key: "rotationY", to: 0, duration: duration, easing: easing });
+        chart.set("minZoomLevel", 1.5);
+        chart.set("maxZoomLevel", 1.5);
         chart.animate({ key: "zoomLevel", to: 1.5, duration: duration, easing: easing });
       } else {
         // Switch to Globe
@@ -286,6 +288,8 @@ const MarketAnalytics = () => {
         chart.set("panY", "rotateY");
         chart.animate({ key: "rotationX", to: -15, duration: duration, easing: easing });
         chart.animate({ key: "rotationY", to: -20, duration: duration, easing: easing });
+        chart.set("minZoomLevel", 0.9);
+        chart.set("maxZoomLevel", 0.9);
         chart.animate({ key: "zoomLevel", to: 0.9, duration: duration, easing: easing });
       }
       setIsGlobe(!isGlobe);
@@ -348,21 +352,6 @@ const MarketAnalytics = () => {
             }}
           >
             {isGlobe ? <MapIcon size={20} /> : <Globe size={20} />}
-          </button>
-          
-          <button 
-            onClick={() => chartRef.current && chartRef.current.goHome(1000)}
-            className="w-12 h-12 flex items-center justify-center text-white transition-all shadow-lg group"
-            style={{ 
-              borderRadius: '12px', 
-              background: 'rgba(15, 23, 42, 0.8)', 
-              backdropFilter: 'blur(12px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              cursor: 'pointer'
-            }}
-            title="Recenter Map"
-          >
-            <Navigation size={20} />
           </button>
         </div>
 
