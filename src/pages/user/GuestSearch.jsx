@@ -195,7 +195,8 @@ const GuestSearch = () => {
                     </div>
                     <div className="info-bottom">
                       <div className="amenities-preview">
-                        {hotel.amenities.slice(0, 2).map((a, i) => <span key={i}>{a}</span>)}
+                        {hotel.amenities.slice(0, 1).map((a, i) => <span key={i}>{a}</span>)}
+                        {hotel.amenities.length > 1 && <span className="more-tag">+{hotel.amenities.length - 1}</span>}
                       </div>
                       <div className="rating">★ {hotel.rating}</div>
                     </div>

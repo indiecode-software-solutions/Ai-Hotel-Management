@@ -249,10 +249,10 @@ const GuestLanding = () => {
               <div className="property-details">
                 <div className="details-footer">
                   <div className="amenity-list">
-                    {hotel.amenities.slice(0, 2).map((a, j) => (
+                    {hotel.amenities.slice(0, 1).map((a, j) => (
                       <span key={j}>{a}</span>
                     ))}
-                    {hotel.amenities.length > 2 && <span>+{hotel.amenities.length - 2}</span>}
+                    {hotel.amenities.length > 1 && <span>+{hotel.amenities.length - 1}</span>}
                   </div>
                   <button 
                     className="reserve-action"
