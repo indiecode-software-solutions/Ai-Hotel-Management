@@ -98,7 +98,7 @@ const GuestLanding = () => {
         <div className="navbar-left">
           <Link to="/" className="guest-logo">
             <Globe size={20} />
-            <span>OASIS HOSPITALITY</span>
+            <span>TRIPNEST</span>
           </Link>
         </div>
         <div className="navbar-center">
@@ -128,7 +128,7 @@ const GuestLanding = () => {
           <div className="menu-header">
             <Link to="/" className="guest-logo" onClick={() => setIsMenuOpen(false)}>
               <Globe size={24} />
-              <span>OASIS</span>
+              <span>TRIPNEST</span>
             </Link>
             <button className="menu-close-btn" onClick={() => setIsMenuOpen(false)}>
               <X size={32} />
@@ -160,7 +160,7 @@ const GuestLanding = () => {
               <span>Twitter</span>
               <span>LinkedIn</span>
             </div>
-            <button className="mobile-auth-btn">Sign In to Oasis</button>
+            <button className="mobile-auth-btn">Sign In to TripNest</button>
           </div>
         </div>
       </div>
@@ -281,7 +281,7 @@ const GuestLanding = () => {
             <span className="section-tag">Our Philosophy</span>
             <h2 className="section-heading">Where intelligence meets elegance.</h2>
             <p className="section-description">
-              Oasis isn't just a booking platform; it's a filtration system for the world's most exceptional hospitality. We use artificial intelligence to understand the nuance of your desires, matching you with spaces that don't just house you, but inspire you.
+              TripNest isn't just a booking platform; it's a filtration system for the world's most exceptional hospitality. We use artificial intelligence to understand the nuance of your desires, matching you with spaces that don't just house you, but inspire you.
             </p>
             <div className="feature-badges reveal-on-scroll">
               <div className="badge-item stagger-item">
@@ -306,14 +306,14 @@ const GuestLanding = () => {
         <div className="footer-content">
           <div className="footer-brand">
             <Globe size={24} />
-            <span>OASIS</span>
+            <span>TRIPNEST</span>
           </div>
           <div className="footer-links">
             <a href="#">Terms</a>
             <a href="#">Privacy</a>
             <a href="#">Contact</a>
           </div>
-          <p className="copyright">© 2026 Oasis Booking. All rights reserved.</p>
+          <p className="copyright">© 2026 TripNest Booking. All rights reserved.</p>
         </div>
       </footer>
 

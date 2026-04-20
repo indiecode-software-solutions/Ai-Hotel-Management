@@ -103,7 +103,7 @@ const MarketAnalytics = () => {
       nodePadding: 0.3
     }));
 
-    // Flow line styling (Oasis Gold)
+    // Flow line styling (TripNest Gold)
     sankeySeries.mapPolygons.template.setAll({
       fill: am5.color(0xd4af37),
       fillOpacity: 0.4,

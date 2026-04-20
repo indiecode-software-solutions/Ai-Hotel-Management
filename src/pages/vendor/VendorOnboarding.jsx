@@ -86,7 +86,7 @@ const VendorOnboarding = () => {
         <div className="side-panel-content">
           <div className="onboarding-brand">
             <i className="material-icons">hotel_class</i>
-            OASIS PARTNERS
+            TRIPNEST PARTNERS
           </div>
 
           <div className="stepper-container">
@@ -107,7 +107,7 @@ const VendorOnboarding = () => {
           </div>
 
           <div className="side-panel-footer">
-            <p>© 2026 Oasis Hospitality Group.</p>
+            <p>© 2026 TripNest Hospitality Group.</p>
             <p>Trusted by 5,000+ luxury properties worldwide.</p>
           </div>
         </div>
@@ -256,7 +256,7 @@ const VendorOnboarding = () => {
               <p>Your property is now being reviewed by our curation team.</p>
             </div>
             <p style={{ color: 'var(--text-muted)', lineHeight: '1.8' }}>
-              Thank you for choosing Oasis. We maintain a high standard for our partners to ensure the best experience for our guests. You'll receive an email notification once your property is live on our platform.
+              Thank you for choosing TripNest. We maintain a high standard for our partners to ensure the best experience for our guests. You'll receive an email notification once your property is live on our platform.
             </p>
             <button 
               className="btn-primary" 

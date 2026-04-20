@@ -237,7 +237,7 @@ const PricingEngine = () => {
                 ) : (
                   <div className="ai-markdown">
                     <div className="text-secondary leading-relaxed text-lg italic border-l-2 border-accent pl-6 py-2">
-                      "{intelligenceBriefing.includes("Oasis network") 
+                      "{intelligenceBriefing.includes("TripNest network") 
                         ? "AI analysis indicates a massive surge in luxury heritage bookings for the upcoming Pongal and Summer peak seasons in South India. Recommended rate adjustments of 25-30% for Temple View and Royal Heritage suites to capitalize on 96% projected occupancy." 
                         : intelligenceBriefing}"
                     </div>

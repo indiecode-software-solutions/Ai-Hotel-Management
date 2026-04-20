@@ -4,27 +4,36 @@ import * as am5map from '@amcharts/amcharts5/map';
 import am5geodata_worldLow from '@amcharts/amcharts5-geodata/worldLow';
 import am5themes_Animated from '@amcharts/amcharts5/themes/Animated';
 
-const OasisGlobe = ({ properties }) => {
+const TripNestGlobe = ({ properties }) => {
   const chartRef = useRef(null);
   const pointSeriesRef = useRef(null);
 
   useLayoutEffect(() => {
-    let root = am5.Root.new("oasis-globe-div");
+    let root = am5.Root.new("tripnest-globe-div");
+    
+    // Remove default logo
+    if (root._logo) root._logo.hide();
     
     // Set themes
-    const oasisTheme = am5.Theme.new(root);
-    oasisTheme.rule("InterfaceColors").setAll({
+    const tripNestTheme = am5.Theme.new(root);
+    tripNestTheme.rule("InterfaceColors").setAll({
         background: am5.color(0x0f172a),
-        text: am5.color(0xcbd5e0),
+        text: am5.color(0xffffff),
+        primaryButton: am5.color(0x334155),
+        primaryButtonHover: am5.color(0x475569)
     });
     
-    // Switch button colors
-    oasisTheme.rule("Button").setAll({
+    // Switch button styling
+    tripNestTheme.rule("Button").setAll({
         fill: am5.color(0x334155),
-        stroke: am5.color(0x475569)
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingLeft: 12,
+        paddingRight: 12,
+        cornerRadius: 8
     });
 
-    root.setThemes([am5themes_Animated.new(root), oasisTheme]);
+    root.setThemes([am5themes_Animated.new(root), tripNestTheme]);
 
     // Background Container
     root.container.set("background", am5.Rectangle.new(root, {
@@ -94,7 +103,7 @@ const OasisGlobe = ({ properties }) => {
       
       let circle = container.children.push(am5.Circle.new(root, {
         radius: 6,
-        fill: am5.color(0xd4af37), // Oasis gold accent
+        fill: am5.color(0xd4af37), // TripNest gold accent
         stroke: am5.color(0xffffff),
         strokeWidth: 1.5,
         tooltipText: "{title}\n{price} /nt"
@@ -241,7 +250,7 @@ const OasisGlobe = ({ properties }) => {
     }
   }, [properties]);
 
-  return <div id="oasis-globe-div" style={{ width: "100%", height: "100%", background: "#0f172a" }}></div>;
+  return <div id="tripnest-globe-div" style={{ width: "100%", height: "100%", background: "#0f172a" }}></div>;
 };
 
-export default OasisGlobe;
+export default TripNestGlobe;

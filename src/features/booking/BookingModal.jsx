@@ -216,7 +216,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
               <div className="summary-section">
                 <div className="summary-item">
                   <span className="label">Destination</span>
-                  <span className="value">{hotel?.title || 'Oasis Resort'}</span>
+                  <span className="value">{hotel?.title || 'TripNest Resort'}</span>
                 </div>
                 <div className="summary-item">
                   <span className="label">Dates</span>
@@ -244,7 +244,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
             
             <div className="confirmation-notice">
               <Sparkles size={16} className="text-accent" />
-              <span>Oasis AI has verified this booking for immediate confirmation.</span>
+              <span>TripNest AI has verified this booking for immediate confirmation.</span>
             </div>
           </div>
         );

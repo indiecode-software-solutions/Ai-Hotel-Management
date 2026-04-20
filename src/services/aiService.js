@@ -17,14 +17,14 @@ export const generateAiResponse = async (userPrompt, context = "") => {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "http://localhost:5173",
-          "X-Title": "Oasis Hotel Management",
+          "X-Title": "TripNest Hotel Management",
         },
         body: JSON.stringify({
           model: model,
           messages: [
             {
               role: "system",
-              content: `You are the AI Concierge for Oasis Hotel. Be professional and concise. 
+              content: `You are the AI Concierge for TripNest Hotel. Be professional and concise. 
               Rooms: Royal Horizon ($540), Celestial Penthouse ($890), Azure Garden ($420).
               Context: ${context}`
             },
@@ -51,5 +51,5 @@ export const generateAiResponse = async (userPrompt, context = "") => {
     }
   }
 
-  return "The Oasis network is currently experiencing high demand. Our staff has been notified and will assist you shortly.";
+  return "The TripNest network is currently experiencing high demand. Our staff has been notified and will assist you shortly.";
 };
