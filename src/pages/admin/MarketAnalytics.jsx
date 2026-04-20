@@ -39,6 +39,9 @@ const MarketAnalytics = () => {
       minZoomLevel: 0.9,
       zoomLevel: 0.9,
       homeGeoPoint: { latitude: 0, longitude: 0 },
+      homeZoomLevel: 0.9,
+      homeRotationX: -15,
+      homeRotationY: -20,
       wheelY: "zoom",
       wheelX: "none",
       pinchZoom: true,
@@ -348,7 +351,7 @@ const MarketAnalytics = () => {
           </button>
           
           <button 
-            onClick={() => chartRef.current && chartRef.current.goHome()}
+            onClick={() => chartRef.current && chartRef.current.goHome(1000)}
             className="w-12 h-12 flex items-center justify-center text-white transition-all shadow-lg group"
             style={{ 
               borderRadius: '12px', 

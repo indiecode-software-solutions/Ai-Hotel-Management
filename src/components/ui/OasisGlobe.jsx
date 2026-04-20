@@ -42,6 +42,9 @@ const OasisGlobe = ({ properties }) => {
       maxZoomLevel: 32,
       zoomLevel: 1.7,
       homeGeoPoint: { latitude: 0, longitude: 0 },
+      homeZoomLevel: 1.7,
+      homeRotationX: 0,
+      homeRotationY: 0,
       wheelY: "zoom",
       wheelX: "none",
       pinchZoom: true,
@@ -165,7 +168,7 @@ const OasisGlobe = ({ properties }) => {
     }));
 
     homeButton.on("click", function() {
-      chart.goHome();
+      chart.goHome(1000);
     });
 
     switchButton.get("background").setAll({
