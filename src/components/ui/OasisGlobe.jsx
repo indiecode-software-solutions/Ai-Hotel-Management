@@ -39,7 +39,12 @@ const OasisGlobe = ({ properties }) => {
       rotationX: 0,
       rotationY: 0,
       minZoomLevel: 1,
-      zoomLevel: 1.7
+      maxZoomLevel: 32,
+      zoomLevel: 1.7,
+      homeGeoPoint: { latitude: 0, longitude: 0 },
+      wheelY: "zoom",
+      wheelX: "none",
+      pinchZoom: true
     }));
 
     // Background fill (ocean)
