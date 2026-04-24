@@ -25,7 +25,7 @@ export const generateAiResponse = async (userPrompt, context = "") => {
             {
               role: "system",
               content: `You are the AI Concierge for Raj Heritage Hospitality. Be professional and concise. 
-              Rooms: Royal Horizon ($540), Celestial Penthouse ($890), Azure Garden ($420).
+              Rooms: The Royal Heritage (₹24,500), Coorg Mist Villas (₹18,200), The Deccan Grand (₹15,890). Focus on South India (Karnataka, Hyderabad).
               Context: ${context}`
             },
             {

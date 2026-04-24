@@ -41,10 +41,10 @@ const PricingEngine = () => {
 
   // Mock data localized for India (Rates in USD but higher scale for luxury or can use INR context)
   const comparisonData = [
-    { room: 'Superior', current: 180, recommended: 245 },
-    { room: 'Heritage', current: 350, recommended: 480 },
-    { room: 'Temple View', current: 520, recommended: 690 },
-    { room: 'Royal Suite', current: 950, recommended: 1250 },
+    { room: 'Heritage Superior', current: 15000, recommended: 20500 },
+    { room: 'Temple View Suite', current: 28000, recommended: 38500 },
+    { room: 'Royal Heritage Wing', current: 45000, recommended: 58000 },
+    { room: 'Executive Estate Villa', current: 82000, recommended: 105000 },
   ];
 
   // Mock data for the 6-month timeline localized for South India
@@ -164,7 +164,7 @@ const PricingEngine = () => {
                       axisLine={false} 
                       tickLine={false} 
                       tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
-                      tickFormatter={(val) => `$${val}`}
+                      tickFormatter={(val) => `₹${val/1000}k`}
                     />
                     <Tooltip 
                       cursor={{ fill: 'rgba(255,255,255,0.03)' }}
@@ -176,11 +176,11 @@ const PricingEngine = () => {
                               <div className="flex flex-col gap-1">
                                 <div className="flex justify-between gap-8">
                                   <span className="text-muted text-xs">Current:</span>
-                                  <span className="text-primary font-bold">${payload[0].value}</span>
+                                  <span className="text-primary font-bold">₹{payload[0].value.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between gap-8">
                                   <span className="text-accent text-xs">AI Recommended:</span>
-                                  <span className="text-accent font-bold">${payload[1].value}</span>
+                                  <span className="text-accent font-bold">₹{payload[1].value.toLocaleString()}</span>
                                 </div>
                                 <div className="mt-2 pt-2 border-t border-default flex justify-between gap-8">
                                   <span className="text-success text-xs font-bold">Yield Increase:</span>

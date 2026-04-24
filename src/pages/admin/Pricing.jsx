@@ -45,7 +45,7 @@ export const Pricing = () => {
             <div key={index} className="flex items-center justify-between gap-4 mb-1">
               <span className="text-sm text-muted">{entry.name}:</span>
               <span className="font-bold" style={{ color: entry.color }}>
-                {entry.name === 'Revenue' ? `$${entry.value.toLocaleString()}` : `${entry.value}%`}
+                {entry.name === 'Revenue' ? `₹${entry.value.toLocaleString()}` : `${entry.value}%`}
               </span>
             </div>
           ))}
@@ -57,29 +57,29 @@ export const Pricing = () => {
 
   const pricingSuggestions = [
     {
-      roomType: 'Deluxe Suite',
-      current: 450,
-      suggested: 520,
-      change: '+15.5%',
-      reason: 'Local Jazz Festival (Oct 12-15) - Market demand up 40%',
-      confidence: 94,
+      roomType: 'Temple View Suite',
+      current: 28000,
+      suggested: 34500,
+      change: '+23.2%',
+      reason: 'Hampi Utsav (Nov 3-5) - Regional demand spike for heritage sites.',
+      confidence: 96,
       trend: 'up'
     },
     {
-      roomType: 'Standard Double',
-      current: 280,
-      suggested: 245,
-      change: '-12.5%',
-      reason: 'Low seasonal booking velocity. Competition drop by 20%',
-      confidence: 88,
+      roomType: 'Executive Estate Villa',
+      current: 82000,
+      suggested: 72500,
+      change: '-11.6%',
+      reason: 'Heavy Monsoon in Coorg. Competitors reducing rates by 15%.',
+      confidence: 89,
       trend: 'down'
     },
     {
-      roomType: 'Executive Suite',
-      current: 850,
-      suggested: 850,
+      roomType: 'Heritage Superior',
+      current: 15000,
+      suggested: 15000,
       change: '0%',
-      reason: 'Optimal occupancy reached. Maintain premium positioning.',
+      reason: 'Optimal occupancy reached for business segment in Bangalore/Hyd.',
       confidence: 98,
       trend: 'stable'
     }
@@ -87,13 +87,13 @@ export const Pricing = () => {
 
   const rateColumns = [
     { header: 'Room Category', key: 'roomType', render: (val) => <span className="cell-main">{val}</span> },
-    { header: 'Current Rate', key: 'current', render: (val) => <span className="text-muted">${val}</span> },
+    { header: 'Current Rate', key: 'current', render: (val) => <span className="text-muted">₹{val.toLocaleString()}</span> },
     { 
       header: 'AI Suggested', 
       key: 'suggested', 
       render: (val, item) => (
         <span className={`font-bold ${item.trend === 'up' ? 'text-success' : item.trend === 'down' ? 'text-danger' : 'text-primary'}`}>
-          ${val}
+          ₹{val.toLocaleString()}
         </span>
       ) 
     },
@@ -175,7 +175,7 @@ export const Pricing = () => {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fill: 'var(--text-muted)', fontSize: 12 }} 
-                tickFormatter={(value) => `$${value/1000}k`}
+                tickFormatter={(value) => `₹${value/1000}k`}
                 dx={-10}
               />
               <YAxis 
@@ -236,9 +236,9 @@ export const Pricing = () => {
             
             <h3 className="text-xl font-bold mb-2">{suggestion.roomType}</h3>
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-2xl text-muted line-through">${suggestion.current}</span>
+              <span className="text-2xl text-muted line-through">₹{suggestion.current.toLocaleString()}</span>
               <ArrowRight size={20} className="text-muted" />
-              <span className="text-4xl font-extrabold text-primary">${suggestion.suggested}</span>
+              <span className="text-4xl font-extrabold text-primary">₹{suggestion.suggested.toLocaleString()}</span>
             </div>
 
             <p className="text-muted text-sm leading-relaxed mb-6">

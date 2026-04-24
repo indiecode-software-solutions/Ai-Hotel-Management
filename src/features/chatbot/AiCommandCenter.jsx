@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Send, TrendingUp, DollarSign, AlertCircle } from 'lucide-react';
+import { Sparkles, Send, TrendingUp, IndianRupee, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { generateAiResponse } from '../../services/aiService';
 
@@ -22,7 +22,7 @@ const AiCommandCenter = () => {
     setResponse(null);
     
     try {
-      const res = await generateAiResponse(text, "Admin Dashboard Context: Today is Saturday. Occupancy is 88%. RevPAR is $240. Next big event: Tech Conference on Monday.");
+      const res = await generateAiResponse(text, "Admin Dashboard Context: Today is Saturday. Occupancy is 88%. RevPAR is ₹18,500. Next big event: Regional Conference on Monday.");
       setResponse(res);
     } catch (error) {
       setResponse("Failed to connect to AI command. Please try again.");
@@ -33,7 +33,7 @@ const AiCommandCenter = () => {
 
   const insights = [
     { label: 'Occupancy', value: '+12%', icon: <TrendingUp size={14} />, color: 'var(--action-primary)' },
-    { label: 'RevPAR', value: '+$42', icon: <DollarSign size={14} />, color: 'var(--action-accent)' },
+    { label: 'RevPAR', value: '+₹3,400', icon: <IndianRupee size={14} />, color: 'var(--action-accent)' },
     { label: 'Demand', value: 'High', icon: <AlertCircle size={14} />, color: '#ef4444' }
   ];
 

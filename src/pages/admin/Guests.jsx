@@ -43,18 +43,18 @@ export const Guests = () => {
     {
       header: 'Total Spend',
       key: 'spend',
-      render: (val) => <span className="font-bold text-accent">${val}</span>
+      render: (val) => <span className="font-bold text-accent">₹{val}</span>
     }
   ];
 
   const guestsData = [
-    { name: 'Alexander Wright', location: 'London, UK', stays: 12, tier: 'Diamond', lastStay: 'Oct 12, 2023', spend: '14,250' },
-    { name: 'Elena Rodriguez', location: 'Madrid, ES', stays: 4, tier: 'Gold', lastStay: 'Oct 13, 2023', spend: '3,450' },
-    { name: 'Marcus Chen', location: 'Singapore, SG', stays: 28, tier: 'Diamond', lastStay: 'Oct 14, 2023', spend: '42,800' },
-    { name: 'Sophia Laurent', location: 'Paris, FR', stays: 1, tier: 'Standard', lastStay: 'Oct 15, 2023', spend: '5,500' },
-    { name: 'Julian Barnes', location: 'New York, US', stays: 6, tier: 'Silver', lastStay: 'Aug 22, 2023', spend: '2,200' },
-    { name: 'Isabella Rossi', location: 'Milan, IT', stays: 15, tier: 'Diamond', lastStay: 'Sep 30, 2023', spend: '18,700' },
-    { name: 'Liam Wilson', location: 'Sydney, AU', stays: 3, tier: 'Silver', lastStay: 'Jul 15, 2023', spend: '1,850' },
+    { name: 'Arjun Reddy', location: 'Hyderabad, TS', stays: 12, tier: 'Diamond', lastStay: 'Jan 12, 2024', spend: '4,14,250' },
+    { name: 'Priya Sharma', location: 'Bangalore, KA', stays: 4, tier: 'Gold', lastStay: 'Jan 13, 2024', spend: '1,83,450' },
+    { name: 'Rahul Malhotra', location: 'Mumbai, MH', stays: 28, tier: 'Diamond', lastStay: 'Jan 14, 2024', spend: '12,42,800' },
+    { name: 'Sanjay Gupta', location: 'Delhi, NCR', stays: 1, tier: 'Standard', lastStay: 'Jan 15, 2024', spend: '55,500' },
+    { name: 'Vikram Singh', location: 'Chennai, TN', stays: 6, tier: 'Silver', lastStay: 'Dec 22, 2023', spend: '82,200' },
+    { name: 'Ananya Deshmukh', location: 'Pune, MH', stays: 15, tier: 'Diamond', lastStay: 'Dec 30, 2023', spend: '6,18,700' },
+    { name: 'Karthik Nair', location: 'Kochi, KL', stays: 3, tier: 'Silver', lastStay: 'Nov 15, 2023', spend: '41,850' },
   ];
 
   return (

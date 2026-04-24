@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Calendar, Users, ChevronRight, Check, Sparkles, Plane, Coffee, Wind, Shield, ArrowLeft } from 'lucide-react';
 import './booking.css';
+import room1 from '../../assets/Super Deluxe Room.jpeg';
+import room2 from '../../assets/DSC00831 (1).JPG';
+import room3 from '../../assets/Garden.png';
 
 const BookingModal = ({ hotel, isOpen, onClose }) => {
   const [step, setStep] = useState(1);
@@ -24,56 +27,56 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
 
   const roomTypes = [
     {
-      id: 'junior-suite',
-      name: 'Junior Suite',
-      description: 'Mountain view with private balcony',
-      price: 450,
-      image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=400&q=80'
+      id: 'temple-suite',
+      name: 'Temple View Suite',
+      description: 'Ancient temple skyline view with private balcony',
+      price: 18500,
+      image: room1
     },
     {
-      id: 'presidential',
-      name: 'Presidential Wing',
-      description: 'Full floor with private butler',
-      price: 1200,
-      image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=400&q=80'
+      id: 'royal-heritage',
+      name: 'Royal Heritage Wing',
+      description: 'Authentic palace experience with private butler',
+      price: 32000,
+      image: room2
     },
     {
-      id: 'ocean-villa',
-      name: 'Ocean Villa',
-      description: 'Direct lagoon access & infinity pool',
-      price: 850,
-      image: 'https://images.unsplash.com/photo-1439130490301-25e322d88054?auto=format&fit=crop&w=400&q=80'
+      id: 'estate-villa',
+      name: 'Estate Villa',
+      description: 'Private coffee estate access & infinity pool',
+      price: 24850,
+      image: room3
     }
   ];
 
   const addons = [
     {
-      id: 'heli',
-      name: 'Heli-Transfer',
-      description: 'Private arrival via rooftop pad',
-      price: 450,
-      icon: <Plane size={20} />
-    },
-    {
-      id: 'chef',
-      name: 'Private Chef',
-      description: 'Custom 7-course tasting menu',
-      price: 300,
-      icon: <Coffee size={20} />
-    },
-    {
-      id: 'spa',
-      name: 'In-Room Spa',
-      description: 'Deep tissue & aromatherapy',
-      price: 180,
+      id: 'ayurveda',
+      name: 'Ayurvedic Spa',
+      description: 'Deep tissue & traditional aromatherapy',
+      price: 4500,
       icon: <Wind size={20} />
     },
     {
-      id: 'security',
-      name: 'Elite Security',
-      description: '24/7 dedicated protection',
-      price: 600,
-      icon: <Shield size={20} />
+      id: 'temple-tour',
+      name: 'Private Temple Tour',
+      description: 'Guided VIP tour of ancient Hampi ruins',
+      price: 3000,
+      icon: <Sparkles size={20} />
+    },
+    {
+      id: 'breakfast',
+      name: 'Plantation Breakfast',
+      description: 'Authentic South Indian estate breakfast',
+      price: 1800,
+      icon: <Coffee size={20} />
+    },
+    {
+      id: 'transfer',
+      name: 'Airport Transfer',
+      description: 'Luxury SUV pick-up from Hyderabad/Bangalore',
+      price: 6000,
+      icon: <Plane size={20} />
     }
   ];
 
@@ -172,7 +175,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
                   <div className="room-info">
                     <h4>{room.name}</h4>
                     <p>{room.description}</p>
-                    <div className="room-price">${room.price} <small>/night</small></div>
+                    <div className="room-price">₹{room.price.toLocaleString()} <small>/night</small></div>
                   </div>
                 </div>
               ))}
@@ -197,7 +200,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
                     <div className="addon-details">
                       <h5>{addon.name}</h5>
                       <p>{addon.description}</p>
-                      <div className="addon-price">+${addon.price}</div>
+                      <div className="addon-price">+₹{addon.price.toLocaleString()}</div>
                     </div>
                     <div className="addon-checkbox">
                       {isSelected && <Check size={12} />}
@@ -282,7 +285,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
         <div className="booking-modal-footer">
           <div className="total-estimate">
             <span className="total-label">Estimated Total</span>
-            <span className="total-amount">${calculateTotal()}</span>
+            <span className="total-amount">₹{calculateTotal().toLocaleString()}</span>
           </div>
           
           <div className="footer-actions">

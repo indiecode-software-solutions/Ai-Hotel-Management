@@ -6,18 +6,24 @@ import '../../styles/guest.css';
 import { generateAiResponse } from '../../services/aiService';
 import RajHeritageGlobe from '../../components/ui/RajHeritageGlobe';
 import BookingModal from '../../features/booking/BookingModal';
+import prop1 from '../../assets/Rajmahal (1).jpg';
+import prop2 from '../../assets/Lawn.jpeg';
+import prop3 from '../../assets/Full View.jpg';
+import prop4 from '../../assets/Rajmahal (3).jpg';
+import prop5 from '../../assets/Drone View 1.jpg';
+import prop6 from '../../assets/Pool Side View.jpeg';
 
 // Mock Database
 const MOCK_PROPERTIES = [
-  { id: 1, title: 'The Sapphire Resort', location: 'Maldives, Indian Ocean', price: '$540', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80', amenities: ['Private Beach', 'Infinity Pool', 'Heliport'], vibe: 'Tropical', rating: 4.9, coordinates: [3.2028, 73.2207] },
-  { id: 2, title: 'Azure Garden Villas', location: 'Bali, Indonesia', price: '$420', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80', amenities: ['Yoga Studio', 'Eco-Smart', 'Spa & Wellness'], vibe: 'Minimalist', rating: 4.8, coordinates: [-8.4095, 115.1889] },
-  { id: 3, title: 'The Metropolis Luxe', location: 'New York City, USA', price: '$890', image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80', amenities: ['Sky Deck', 'Fine Dining', 'Concierge'], vibe: 'Industrial', rating: 4.7, coordinates: [40.7128, -74.0060] },
-  { id: 4, title: 'Neon Nights Loft', location: 'Tokyo, Japan', price: '$350', image: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80', amenities: ['Smart Home', 'City View', 'Game Room'], vibe: 'Industrial', rating: 4.6, coordinates: [35.6762, 139.6503] },
-  { id: 5, title: 'Desert Mirage', location: 'Dubai, UAE', price: '$1200', image: 'https://images.unsplash.com/photo-1542332213-31f87348057f?auto=format&fit=crop&w=800&q=80', amenities: ['Private Chef', 'Pool', 'Dune Buggy'], vibe: 'Minimalist', rating: 4.9, coordinates: [25.2048, 55.2708] },
-  { id: 6, title: 'Rainforest Canopy Retreat', location: 'Costa Rica', price: '$480', image: 'https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?auto=format&fit=crop&w=800&q=80', amenities: ['Eco-Tours', 'Hot Springs', 'Wildlife'], vibe: 'Tropical', rating: 4.8, coordinates: [9.7489, -83.7534] },
+  { id: 1, title: 'The Royal Heritage', location: 'Hampi, Karnataka', price: '₹24,500', image: prop1, amenities: ['Temple View', 'Infinity Pool', 'Ayurvedic Spa'], vibe: 'Heritage', rating: 4.9, coordinates: [15.3350, 76.4600] },
+  { id: 2, title: 'Coorg Mist Villas', location: 'Coorg, Karnataka', price: '₹18,200', image: prop2, amenities: ['Coffee Plantation', 'Private Plunge Pool', 'Trekking'], vibe: 'Nature', rating: 4.8, coordinates: [12.3375, 75.8069] },
+  { id: 3, title: 'The Deccan Grand', location: 'Hyderabad, Telangana', price: '₹15,890', image: prop3, amenities: ['Sky Deck', 'Fine Dining', 'Elite Concierge'], vibe: 'Urban', rating: 4.7, coordinates: [17.3850, 78.4867] },
+  { id: 4, title: 'Mysore Palace Suites', location: 'Mysore, Karnataka', price: '₹12,500', image: prop4, amenities: ['Royal Decor', 'City View', 'Cultural Tours'], vibe: 'Heritage', rating: 4.6, coordinates: [12.2958, 76.6394] },
+  { id: 5, title: 'Silicon Valley Executive', location: 'Bangalore, Karnataka', price: '₹22,000', image: prop5, amenities: ['Business Hub', 'Smart Suite', 'Airport Link'], vibe: 'Urban', rating: 4.9, coordinates: [12.9716, 77.5946] },
+  { id: 6, title: 'Kabini River Retreat', location: 'Kabini, Karnataka', price: '₹28,480', image: prop6, amenities: ['Wildlife Safari', 'River View', 'Luxury Tents'], vibe: 'Nature', rating: 4.8, coordinates: [11.9214, 76.2231] },
 ];
 
-const VIBES = ['All', 'Minimalist', 'Industrial', 'Tropical'];
+const VIBES = ['All', 'Heritage', 'Nature', 'Urban'];
 
 const GuestSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -74,9 +80,9 @@ const GuestSearch = () => {
       // Attempt to auto-select vibe based on query if it matches one
       const lowerQ = q.toLowerCase();
       let matchedVibe = activeVibe;
-      if (lowerQ.includes('minimal')) matchedVibe = 'Minimalist';
-      else if (lowerQ.includes('industrial') || lowerQ.includes('city') || lowerQ.includes('urban')) matchedVibe = 'Industrial';
-      else if (lowerQ.includes('tropic') || lowerQ.includes('beach') || lowerQ.includes('nature')) matchedVibe = 'Tropical';
+      if (lowerQ.includes('heritage') || lowerQ.includes('culture') || lowerQ.includes('palace')) matchedVibe = 'Heritage';
+      else if (lowerQ.includes('nature') || lowerQ.includes('river') || lowerQ.includes('wildlife') || lowerQ.includes('mist')) matchedVibe = 'Nature';
+      else if (lowerQ.includes('urban') || lowerQ.includes('city') || lowerQ.includes('business')) matchedVibe = 'Urban';
       
       if (matchedVibe !== activeVibe && matchedVibe !== 'All') {
         setActiveVibe(matchedVibe);

@@ -47,11 +47,11 @@ const RajHeritageGlobe = ({ properties }) => {
       projection: am5map.geoMercator(),
       rotationX: 0,
       rotationY: 0,
-      minZoomLevel: 1.7,
-      maxZoomLevel: 1.7,
-      zoomLevel: 1.7,
-      homeGeoPoint: { latitude: 0, longitude: 0 },
-      homeZoomLevel: 1.7,
+      minZoomLevel: 3,
+      maxZoomLevel: 3,
+      zoomLevel: 3,
+      homeGeoPoint: { latitude: 15, longitude: 78 },
+      homeZoomLevel: 3,
       homeRotationX: 0,
       homeRotationY: 0,
       wheelY: "none",
@@ -187,9 +187,9 @@ const RajHeritageGlobe = ({ properties }) => {
       chart.animate({ key: "rotationX", to: 0, duration: duration, easing: easing });
       chart.animate({ key: "rotationY", to: 0, duration: duration, easing: easing });
       bgSeries.mapPolygons.template.set("fillOpacity", 0);
-      chart.set("minZoomLevel", 1.7);
-      chart.set("maxZoomLevel", 1.7);
-      chart.animate({ key: "zoomLevel", to: 1.7, duration: duration, easing: easing });
+      chart.set("minZoomLevel", 3);
+      chart.set("maxZoomLevel", 3);
+      chart.animate({ key: "zoomLevel", to: 3, duration: duration, easing: easing });
     }
 
     switchButton.on("active", function () {

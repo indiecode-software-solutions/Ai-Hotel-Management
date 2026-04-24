@@ -6,6 +6,11 @@ import '../../styles/guest.css';
 import { generateAiResponse } from '../../services/aiService';
 import BookingModal from '../../features/booking/BookingModal';
 import AITripPlanner from '../../components/user/AITripPlanner';
+import poolHero from '../../assets/Pool Side1.jpeg';
+import hampiImg from '../../assets/Entrance Gate.jpeg';
+import coorgImg from '../../assets/Drone View Pool Side.jpg';
+import hydImg from '../../assets/Entrance Night View.jpeg';
+import philosophyImg from '../../assets/Drone View.jpg';
 
 const GuestLanding = () => {
   const [aiQuery, setAiQuery] = useState('');
@@ -56,27 +61,27 @@ const GuestLanding = () => {
 
   const featuredHotels = [
     {
-      title: 'The Sapphire Resort',
-      location: 'Maldives, Indian Ocean',
-      price: '$540',
-      image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80',
-      amenities: ['Private Beach', 'Infinity Pool', 'Heliport'],
+      title: 'The Royal Heritage',
+      location: 'Hampi, Karnataka',
+      price: '₹24,500',
+      image: hampiImg,
+      amenities: ['Temple View', 'Infinity Pool', 'Ayurvedic Spa'],
       badge: 'Most Booked'
     },
     {
-      title: 'Azure Garden Villas',
-      location: 'Bali, Indonesia',
-      price: '$420',
-      image: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80',
-      amenities: ['Yoga Studio', 'Eco-Smart', 'Spa & Wellness'],
+      title: 'Coorg Mist Villas',
+      location: 'Coorg, Karnataka',
+      price: '₹18,200',
+      image: coorgImg,
+      amenities: ['Coffee Plantation', 'Private Plunge Pool', 'Trekking'],
       badge: 'AI Choice'
     },
     {
-      title: 'The Metropolis Luxe',
-      location: 'New York City, USA',
-      price: '$890',
-      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
-      amenities: ['Sky Deck', 'Fine Dining', 'Concierge'],
+      title: 'The Deccan Grand',
+      location: 'Hyderabad, Telangana',
+      price: '₹15,890',
+      image: hydImg,
+      amenities: ['Sky Deck', 'Fine Dining', 'Elite Concierge'],
       badge: 'Trending'
     }
   ];
@@ -171,7 +176,7 @@ const GuestLanding = () => {
           className="hero-visual-layer"
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
-          <div className="hero-video-fallback"></div>
+          <div className="hero-video-fallback" style={{ backgroundImage: `url(${poolHero})` }}></div>
           <div className="hero-overlay-gradient"></div>
         </div>
 
@@ -204,10 +209,10 @@ const GuestLanding = () => {
             </div>
 
             <div className="search-suggestions">
-              <button onClick={() => navigate('/search?query=Villas+in+Bali')}>Bali</button>
-              <button onClick={() => navigate('/search?query=Penthouses+in+NYC')}>New York</button>
-              <button onClick={() => navigate('/search?query=Resorts+in+Maldives')}>Maldives</button>
-              <button onClick={() => navigate('/search?query=Suites+in+Paris')}>Paris</button>
+              <button onClick={() => navigate('/search?query=Resorts+in+Coorg')}>Coorg</button>
+              <button onClick={() => navigate('/search?query=Heritage+in+Hampi')}>Hampi</button>
+              <button onClick={() => navigate('/search?query=Palaces+in+Mysore')}>Mysore</button>
+              <button onClick={() => navigate('/search?query=Suites+in+Hyderabad')}>Hyderabad</button>
             </div>
           </div>
 
@@ -274,7 +279,7 @@ const GuestLanding = () => {
       <section id="about" className="section-container bg-dark-accent">
         <div className="philosophy-layout">
           <div className="philosophy-image reveal-on-scroll">
-            <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80" alt="Luxury Hospitality" />
+            <img src={philosophyImg} alt="Luxury Hospitality" />
             <div className="image-accent-glow"></div>
           </div>
           <div className="philosophy-content reveal-on-scroll">

@@ -35,16 +35,16 @@ export const Bookings = () => {
     { 
       header: 'Amount', 
       key: 'amount',
-      render: (val) => <span className="font-bold text-accent">${val}</span>
+      render: (val) => <span className="font-bold text-accent">₹{val}</span>
     }
   ];
 
   const bookingsData = [
-    { guest: 'Alexander Wright', email: 'alex.w@icloud.com', room: 'Suite 402', checkIn: 'Oct 12, 2023', checkOut: 'Oct 15, 2023', status: 'Confirmed', amount: '1,250' },
-    { guest: 'Elena Rodriguez', email: 'elena.rodriguez@gmail.com', room: 'Deluxe 108', checkIn: 'Oct 13, 2023', checkOut: 'Oct 14, 2023', status: 'Pending', amount: '450' },
-    { guest: 'Marcus Chen', email: 'm.chen@techcorp.io', room: 'Executive 305', checkIn: 'Oct 14, 2023', checkOut: 'Oct 18, 2023', status: 'Confirmed', amount: '2,800' },
-    { guest: 'Sophia Laurent', email: 'sophia.l@fashion.fr', room: 'Penthouse', checkIn: 'Oct 15, 2023', checkOut: 'Oct 20, 2023', status: 'Active', amount: '5,500' },
-    { guest: 'Julian Barnes', email: 'j.barnes@outlook.com', room: 'Standard 212', checkIn: 'Oct 16, 2023', checkOut: 'Oct 17, 2023', status: 'Cancelled', amount: '200' },
+    { guest: 'Arjun Reddy', email: 'arjun.reddy@hyderabad.in', room: 'Suite 402', checkIn: 'Jan 12, 2024', checkOut: 'Jan 15, 2024', status: 'Confirmed', amount: '45,000' },
+    { guest: 'Priya Sharma', email: 'p.sharma@bangalore.com', room: 'Deluxe 108', checkIn: 'Jan 13, 2024', checkOut: 'Jan 14, 2024', status: 'Pending', amount: '18,500' },
+    { guest: 'Rahul Malhotra', email: 'rahul.m@mumbai.co.in', room: 'Executive 305', checkIn: 'Jan 14, 2024', checkOut: 'Jan 18, 2024', status: 'Confirmed', amount: '82,000' },
+    { guest: 'Sanjay Gupta', email: 's.gupta@delhi.biz', room: 'Royal Wing', checkIn: 'Jan 15, 2024', checkOut: 'Jan 20, 2024', status: 'Active', amount: '1,25,000' },
+    { guest: 'Vikram Singh', email: 'v.singh@chennai.org', room: 'Standard 212', checkIn: 'Jan 16, 2024', checkOut: 'Jan 17, 2024', status: 'Cancelled', amount: '12,000' },
   ];
 
   return (
