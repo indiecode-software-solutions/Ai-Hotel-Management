@@ -4,7 +4,7 @@ import '../../styles/guest.css';
 
 const GuestAiConcierge = () => {
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Welcome to TripNest. I am your AI Concierge. How can I assist you with your stay today?' }
+    { type: 'bot', text: 'Welcome to Raj Heritage Hospitality. I am your AI Concierge. How can I assist you with your stay today?' }
   ]);
   const [input, setInput] = useState('');
 

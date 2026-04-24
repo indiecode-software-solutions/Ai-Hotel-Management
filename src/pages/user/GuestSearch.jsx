@@ -4,7 +4,7 @@ import { Sparkles, Search, MapPin, Heart, ArrowLeft, Filter, Globe } from 'lucid
 import ReactMarkdown from 'react-markdown';
 import '../../styles/guest.css';
 import { generateAiResponse } from '../../services/aiService';
-import TripNestGlobe from '../../components/ui/TripNestGlobe';
+import RajHeritageGlobe from '../../components/ui/RajHeritageGlobe';
 import BookingModal from '../../features/booking/BookingModal';
 
 // Mock Database
@@ -106,7 +106,7 @@ const GuestSearch = () => {
       <nav className="search-navbar">
         <Link to="/" className="guest-logo">
           <Globe size={20} />
-          <span>TRIPNEST</span>
+          <span>RAJ HERITAGE</span>
         </Link>
         
         <div className="search-navbar-center">
@@ -224,7 +224,7 @@ const GuestSearch = () => {
 
         {/* Right Side: Map */}
         <div className="split-view-map">
-          <TripNestGlobe properties={filteredProperties} />
+          <RajHeritageGlobe properties={filteredProperties} />
         </div>
       </div>
 

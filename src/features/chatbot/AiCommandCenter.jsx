@@ -70,7 +70,7 @@ const AiCommandCenter = () => {
         <div className="ai-response-panel p-5 rounded-2xl border border-subtle bg-white/[0.02]">
           <div className="flex items-center gap-2 mb-3">
              <Sparkles size={14} className="text-accent" />
-             <span className="text-accent uppercase text-[10px] font-bold tracking-widest">TripNest AI Analysis</span>
+             <span className="text-accent uppercase text-[10px] font-bold tracking-widest">Raj Heritage AI Analysis</span>
           </div>
           <div className="text-primary text-sm leading-relaxed mb-0 ai-markdown">
             <ReactMarkdown>{response}</ReactMarkdown>

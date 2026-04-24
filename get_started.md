@@ -1,8 +1,8 @@
-🚀 AI Hotel Management System — Frontend Build Prompt
+🚀 Raj Heritage Hospitality — Frontend Build Prompt
 
 🎯 Objective
 
-Build a scalable, modular, premium-quality frontend for an AI-powered Hotel Management System.
+Build a scalable, modular, premium-quality frontend for Raj Heritage Hospitality.
 
 The UI must reflect:
 	•	Luxury hotel branding (dark + premium accent)

@@ -1,4 +1,4 @@
-# Oasis AI - Premium Hotel Management Platform
+# Raj Heritage Hospitality - Premium AI Hotel Management
 
 A high-end, cinematic, and AI-driven hotel management system designed for the modern nomad and premium hospitality providers.
 
@@ -11,7 +11,7 @@ A high-end, cinematic, and AI-driven hotel management system designed for the mo
 
 ## 🚀 Tech Stack
 - **Frontend**: React 19 + Vite
-- **Styling**: Vanilla CSS (Custom Oasis Design System)
+- **Styling**: Vanilla CSS (Custom Raj Heritage Design System)
 - **Visuals**: amCharts 5 (Globe/Analytics), Lucide React
 - **Icons**: Custom SVG system
 
@@ -34,4 +34,4 @@ A high-end, cinematic, and AI-driven hotel management system designed for the mo
 
 ---
 
-*Built with ❤️ by Oasis Dev Team*
+*Built with ❤️ by Raj Heritage Dev Team*
