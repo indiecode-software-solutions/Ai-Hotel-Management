@@ -15,12 +15,12 @@ import prop6 from '../../assets/Pool Side View.jpeg';
 
 // Mock Database
 const MOCK_PROPERTIES = [
-  { id: 1, title: 'The Royal Heritage', location: 'Hampi, Karnataka', price: '₹24,500', image: prop1, amenities: ['Temple View', 'Infinity Pool', 'Ayurvedic Spa'], vibe: 'Heritage', rating: 4.9, coordinates: [15.3350, 76.4600] },
-  { id: 2, title: 'Coorg Mist Villas', location: 'Coorg, Karnataka', price: '₹18,200', image: prop2, amenities: ['Coffee Plantation', 'Private Plunge Pool', 'Trekking'], vibe: 'Nature', rating: 4.8, coordinates: [12.3375, 75.8069] },
-  { id: 3, title: 'The Deccan Grand', location: 'Hyderabad, Telangana', price: '₹15,890', image: prop3, amenities: ['Sky Deck', 'Fine Dining', 'Elite Concierge'], vibe: 'Urban', rating: 4.7, coordinates: [17.3850, 78.4867] },
-  { id: 4, title: 'Mysore Palace Suites', location: 'Mysore, Karnataka', price: '₹12,500', image: prop4, amenities: ['Royal Decor', 'City View', 'Cultural Tours'], vibe: 'Heritage', rating: 4.6, coordinates: [12.2958, 76.6394] },
-  { id: 5, title: 'Silicon Valley Executive', location: 'Bangalore, Karnataka', price: '₹22,000', image: prop5, amenities: ['Business Hub', 'Smart Suite', 'Airport Link'], vibe: 'Urban', rating: 4.9, coordinates: [12.9716, 77.5946] },
-  { id: 6, title: 'Kabini River Retreat', location: 'Kabini, Karnataka', price: '₹28,480', image: prop6, amenities: ['Wildlife Safari', 'River View', 'Luxury Tents'], vibe: 'Nature', rating: 4.8, coordinates: [11.9214, 76.2231] },
+  { id: 1, title: 'Raj Mahal', location: 'Orchha, Madhya Pradesh', price: '₹24,500', image: prop1, amenities: ['Heritage View', 'Infinity Pool', 'Ayurvedic Spa'], vibe: 'Heritage', rating: 4.9, coordinates: [25.3500, 78.6400] },
+  { id: 2, title: 'Raj Vila', location: 'Orchha, Madhya Pradesh', price: '₹18,200', image: prop2, amenities: ['Lush Gardens', 'Private Plunge Pool', 'Riverside Yoga'], vibe: 'Nature', rating: 4.8, coordinates: [25.3520, 78.6420] },
+  { id: 3, title: 'Raj Mahal The Palace', location: 'Orchha, Madhya Pradesh', price: '₹32,890', image: prop3, amenities: ['Royal Suite', 'Fine Dining', 'Elite Butler'], vibe: 'Heritage', rating: 4.9, coordinates: [25.3510, 78.6410] },
+  { id: 4, title: 'Betwa Retreat', location: 'Orchha, Madhya Pradesh', price: '₹12,500', image: prop4, amenities: ['River View', 'Tent Stay', 'Cultural Walk'], vibe: 'Nature', rating: 4.6, coordinates: [25.3490, 78.6380] },
+  { id: 5, title: 'Sheesh Mahal', location: 'Orchha, Madhya Pradesh', price: '₹22,000', image: prop5, amenities: ['Palace Decor', 'Museum Access', 'Royal Dining'], vibe: 'Heritage', rating: 4.7, coordinates: [25.3505, 78.6405] },
+  { id: 6, title: 'Bundelkhand Riverside', location: 'Orchha, Madhya Pradesh', price: '₹28,480', image: prop6, amenities: ['Riverfront', 'Private Ghat', 'History Tours'], vibe: 'Heritage', rating: 4.8, coordinates: [25.3480, 78.6370] },
 ];
 
 const VIBES = ['All', 'Heritage', 'Nature', 'Urban'];

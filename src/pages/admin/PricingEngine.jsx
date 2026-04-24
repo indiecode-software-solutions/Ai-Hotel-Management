@@ -41,10 +41,10 @@ const PricingEngine = () => {
 
   // Mock data localized for India (Rates in USD but higher scale for luxury or can use INR context)
   const comparisonData = [
-    { room: 'Heritage Superior', current: 15000, recommended: 20500 },
-    { room: 'Temple View Suite', current: 28000, recommended: 38500 },
-    { room: 'Royal Heritage Wing', current: 45000, recommended: 58000 },
-    { room: 'Executive Estate Villa', current: 82000, recommended: 105000 },
+    { room: 'Raj Mahal', current: 15000, recommended: 20500 },
+    { room: 'Raj Vila', current: 28000, recommended: 38500 },
+    { room: 'Raj Mahal The Palace', current: 45000, recommended: 58000 },
+    { room: 'Betwa Retreat', current: 82000, recommended: 105000 },
   ];
 
   // Mock data for the 6-month timeline localized for South India

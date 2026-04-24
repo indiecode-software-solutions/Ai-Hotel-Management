@@ -1,9 +1,136 @@
-import React from 'react';
-import { Sparkles, Cloud } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, Calendar, ArrowRight, CheckCircle2, Loader2, Plane, Hotel, MapPin, Users, DollarSign, CloudSun, Send, Plus, Trash2, Edit3, Cloud } from 'lucide-react';
 import '../../styles/guest.css';
 import plannerHero from '../../assets/Drone View.jpg';
+import day1Img from '../../assets/Rajmahal (2).jpg';
+import day5Img from '../../assets/Drone View Pool Side.jpg';
 
 const AITripPlanner = () => {
+  const [prompt, setPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [itinerary, setItinerary] = useState(null);
+  const [mode, setMode] = useState('ai'); // 'ai' or 'manual'
+  
+  // Extra parameters
+  const [guests, setGuests] = useState(2);
+  const [duration, setDuration] = useState(7);
+  const [selectedStyle, setSelectedStyle] = useState('Luxury');
+  const travelStyles = ['Luxury', 'Adventure', 'Cultural', 'Wellness', 'Romantic'];
+
+  const [adjustPrompt, setAdjustPrompt] = useState('');
+  const [isAdjusting, setIsAdjusting] = useState(false);
+
+  const [newActivityInputs, setNewActivityInputs] = useState({});
+
+  const handleGenerate = () => {
+    if (!prompt.trim()) return;
+    setIsGenerating(true);
+    setItinerary(null);
+    
+    // Mock API call to simulate AI generation
+    setTimeout(() => {
+      setIsGenerating(false);
+      setItinerary({
+        destination: "Hampi & Coorg, South India",
+        duration: `${duration} Days`,
+        vibe: `${selectedStyle} & Heritage`,
+        guests: `${guests} Travelers`,
+        costEstimate: "₹85,000 - ₹1,20,000",
+        weather: "72°F (Mist)",
+        heroImage: plannerHero,
+        days: [
+          {
+            day: "Day 1-3: Heritage Hampi",
+            activities: [
+              "Check-in at The Royal Heritage (Luxury Temple Suite)", 
+              "Sunrise Coracle Ride in Tungabhadra River", 
+              "Private Tour of Virupaksha & Vitthala Temple Complex"
+            ],
+            icon: <Hotel className="text-accent" size={20} />,
+            image: day1Img
+          },
+          {
+            day: "Day 4: The Transit",
+            activities: [
+              "Private Luxury SUV Drive to Coorg", 
+              "Stopover at Belur & Halebidu Hoysala Temples", 
+              "Evening Arrival at Coorg Mist Villas & Estate Walk"
+            ],
+            icon: <Plane className="text-accent" size={20} />
+          },
+          {
+            day: "Day 5-7: Mist & Coffee Coorg",
+            activities: [
+              "Coffee Plantation Estate Tour with Cupping Session", 
+              "Sunset Trek to Mandalpatti Peak with Private Jeep", 
+              "Traditional Kodava Cuisine Experience at the Villa"
+            ],
+            icon: <MapPin className="text-accent" size={20} />,
+            image: day5Img
+          }
+        ]
+      });
+    }, 2500);
+  };
+
+  const handleStartManual = () => {
+    setItinerary({
+      destination: "Custom Destination",
+      duration: `${duration} Days`,
+      vibe: selectedStyle,
+      guests: `${guests} Travelers`,
+      costEstimate: "TBD",
+      weather: "Check Forecast",
+      heroImage: plannerHero,
+      days: [
+        {
+          day: "Day 1",
+          activities: [],
+          icon: <MapPin className="text-accent" size={20} />
+        }
+      ]
+    });
+  };
+
+  const handleAdjust = () => {
+    if (!adjustPrompt.trim()) return;
+    setIsAdjusting(true);
+    setTimeout(() => {
+      setIsAdjusting(false);
+      setAdjustPrompt('');
+    }, 1500);
+  };
+
+  // Manual Editing Functions
+  const removeActivity = (dayIndex, actIndex) => {
+    const updatedItinerary = { ...itinerary };
+    updatedItinerary.days[dayIndex].activities.splice(actIndex, 1);
+    setItinerary(updatedItinerary);
+  };
+
+  const addActivity = (dayIndex) => {
+    const val = newActivityInputs[dayIndex];
+    if (!val || !val.trim()) return;
+    const updatedItinerary = { ...itinerary };
+    updatedItinerary.days[dayIndex].activities.push(val.trim());
+    setItinerary(updatedItinerary);
+    setNewActivityInputs(prev => ({ ...prev, [dayIndex]: '' }));
+  };
+
+  const addNewDay = () => {
+    const updatedItinerary = { ...itinerary };
+    updatedItinerary.days.push({
+      day: `Day ${updatedItinerary.days.length + 1}`,
+      activities: [],
+      icon: <MapPin className="text-accent" size={20} />
+    });
+    setItinerary(updatedItinerary);
+  };
+
+  const updateDestination = (e) => {
+    setItinerary({...itinerary, destination: e.target.value});
+  };
+
   return (
     <section id="destinations" className="section-container planner-section">
       <div className="planner-split-layout reveal-on-scroll">
@@ -14,12 +141,17 @@ const AITripPlanner = () => {
               <div className="visual-overlay"></div>
               
               <div className="planner-visual-content">
-                <div className="planner-badge">
+                <a 
+                  href="https://travel-planner-ai-mu.vercel.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="planner-badge clickable"
+                >
                   <Sparkles size={16} />
-                  <span>External AI Planner</span>
-                </div>
+                  <span>AI Trip Planner</span>
+                </a>
                 <h2 className="section-heading">Design your perfect escape.</h2>
-                <p className="section-description">We've integrated our exclusive community-driven AI planner to help you curate the ultimate South Indian heritage journey.</p>
+                <p className="section-description">Describe your dream vacation for an AI-curated experience, or build it manually from scratch.</p>
               </div>
 
               {/* Animated Decorations */}
@@ -50,42 +182,181 @@ const AITripPlanner = () => {
         </div>
 
         <div className="planner-right-col">
-          <div className="external-planner-embed-container">
-            <iframe 
-              src="https://travel-planner-ai-mu.vercel.app/" 
-              title="Raj Heritage AI Trip Planner"
-              className="external-planner-iframe"
-              allow="geolocation; microphone; camera; midi; vr; accelerometer; gyroscope; payment; ambient-light-sensor; encrypted-media; usb"
-              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
-            />
+          <div className="planner-workspace scrollable-workspace">
+            {!itinerary ? (
+            <div className="planner-input-area">
+              <div className="planner-mode-tabs">
+                <button className={`mode-tab ${mode === 'ai' ? 'active' : ''}`} onClick={() => setMode('ai')}><Sparkles size={16}/> AI Magic</button>
+                <button className={`mode-tab ${mode === 'manual' ? 'active' : ''}`} onClick={() => setMode('manual')}><Edit3 size={16}/> Manual Builder</button>
+              </div>
+
+              <div className="planner-params">
+                <div className="param-group">
+                  <label>Travel Style</label>
+                  <div className="style-pills">
+                    {travelStyles.map(style => (
+                      <button 
+                        key={style} 
+                        className={`style-pill ${selectedStyle === style ? 'active' : ''}`}
+                        onClick={() => setSelectedStyle(style)}
+                      >
+                        {style}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="param-group-row">
+                  <div className="param-item">
+                    <label><Users size={16}/> Guests</label>
+                    <input type="number" min="1" max="10" value={guests} onChange={e => setGuests(e.target.value)} />
+                  </div>
+                  <div className="param-item">
+                    <label><Calendar size={16}/> Duration (Days)</label>
+                    <input type="number" min="1" max="30" value={duration} onChange={e => setDuration(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+
+              {mode === 'ai' ? (
+                <>
+                  <textarea 
+                    className="planner-textarea"
+                    placeholder="E.g., A heritage escape blending Hampi temples with Coorg coffee estates..."
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                  />
+                  <div className="planner-controls">
+                    <div className="planner-suggestions">
+                      <button onClick={() => setPrompt("A wellness retreat in Coorg focusing on yoga, coffee estate walks, and sunsets.")}>Wellness in Coorg</button>
+                      <button onClick={() => setPrompt("A luxury heritage tour in Hampi and Mysore.")}>Heritage Luxe</button>
+                    </div>
+                    <button 
+                      className="generate-btn" 
+                      onClick={handleGenerate}
+                      disabled={isGenerating || !prompt.trim()}
+                    >
+                      {isGenerating ? (
+                        <><Loader2 className="animate-spin" size={20} /> Crafting...</>
+                      ) : (
+                        <>Generate <ArrowRight size={20} /></>
+                      )}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="manual-start-area">
+                  <p className="manual-hint">Start with a blank canvas and build your itinerary day by day.</p>
+                  <button className="generate-btn manual-btn" onClick={handleStartManual}>
+                    <Plus size={20} /> Create Blank Itinerary
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="itinerary-result fade-in">
+              <div className="itinerary-hero" style={{backgroundImage: `url(${itinerary.heroImage})`}}>
+                <div className="hero-overlay"></div>
+                <button className="reset-planner-btn hero-reset" onClick={() => setItinerary(null)}>
+                  Start Over
+                </button>
+                <div className="hero-content">
+                  <input 
+                    className="editable-title-input" 
+                    value={itinerary.destination} 
+                    onChange={updateDestination} 
+                    placeholder="Enter Destination..."
+                  />
+                  <div className="itinerary-tags">
+                    <span className="itag"><Calendar size={14} /> {itinerary.duration}</span>
+                    <span className="itag"><Users size={14} /> {itinerary.guests}</span>
+                    <span className="itag"><Sparkles size={14} /> {itinerary.vibe}</span>
+                    <span className="itag"><DollarSign size={14} /> {itinerary.costEstimate}</span>
+                    <span className="itag"><CloudSun size={14} /> {itinerary.weather}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="itinerary-body">
+                <div className="itinerary-timeline manual-enabled">
+                  {itinerary.days.map((day, idx) => (
+                    <div key={idx} className="timeline-day stagger-item reveal-active" style={{animationDelay: `${idx * 0.1}s`}}>
+                      <div className="day-icon">{day.icon}</div>
+                      <div className="day-content">
+                        <input 
+                          className="editable-day-title" 
+                          value={day.day} 
+                          onChange={(e) => {
+                            const updated = {...itinerary};
+                            updated.days[idx].day = e.target.value;
+                            setItinerary(updated);
+                          }}
+                        />
+                        <ul className="editable-activities">
+                          {day.activities.map((act, i) => (
+                            <li key={i}>
+                              <CheckCircle2 size={14} className="text-accent flex-shrink-0" /> 
+                              <span>{act}</span>
+                              <button className="delete-act-btn" onClick={() => removeActivity(idx, i)}><Trash2 size={14}/></button>
+                            </li>
+                          ))}
+                        </ul>
+                        
+                        <div className="add-activity-row">
+                          <input 
+                            type="text" 
+                            placeholder="Add manual activity..." 
+                            value={newActivityInputs[idx] || ''}
+                            onChange={(e) => setNewActivityInputs({...newActivityInputs, [idx]: e.target.value})}
+                            onKeyDown={(e) => e.key === 'Enter' && addActivity(idx)}
+                          />
+                          <button onClick={() => addActivity(idx)}><Plus size={16}/></button>
+                        </div>
+
+                        {day.image && (
+                          <div className="day-image">
+                            <img src={day.image} alt={day.day} />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  <div className="add-day-container">
+                    <button className="add-day-btn" onClick={addNewDay}>
+                      <Plus size={18}/> Add Another Day
+                    </button>
+                  </div>
+                </div>
+
+                <div className="itinerary-adjuster">
+                  <div className="adjuster-header">
+                    <Sparkles size={16} className="text-accent" />
+                    <span>AI Refinement (Optional)</span>
+                  </div>
+                  <div className="adjuster-input">
+                    <input 
+                      type="text" 
+                      placeholder="E.g., Make it more budget friendly, or add more museum visits..."
+                      value={adjustPrompt}
+                      onChange={e => setAdjustPrompt(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && handleAdjust()}
+                    />
+                    <button onClick={handleAdjust} disabled={isAdjusting || !adjustPrompt.trim()}>
+                      {isAdjusting ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="itinerary-action">
+                  <button className="book-itinerary-btn">Secure This Journey</button>
+                  <button className="secondary-action-btn">Save to Profile</button>
+                </div>
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .external-planner-embed-container {
-          width: 100%;
-          height: 800px;
-          background: var(--surface-elevated);
-          border-radius: 0;
-          overflow: hidden;
-          border: 1px solid var(--border-subtle);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-
-        .external-planner-iframe {
-          width: 100%;
-          height: 100%;
-          border: none;
-          background: white;
-        }
-
-        @media (max-width: 1024px) {
-          .external-planner-embed-container {
-            height: 600px;
-          }
-        }
-      `}</style>
     </section>
   );
 };

@@ -61,27 +61,27 @@ const GuestLanding = () => {
 
   const featuredHotels = [
     {
-      title: 'The Royal Heritage',
-      location: 'Hampi, Karnataka',
+      title: 'Raj Mahal',
+      location: 'Orchha, Madhya Pradesh',
       price: '₹24,500',
       image: hampiImg,
-      amenities: ['Temple View', 'Infinity Pool', 'Ayurvedic Spa'],
+      amenities: ['Heritage View', 'Infinity Pool', 'Ayurvedic Spa'],
       badge: 'Most Booked'
     },
     {
-      title: 'Coorg Mist Villas',
-      location: 'Coorg, Karnataka',
+      title: 'Raj Vila',
+      location: 'Orchha, Madhya Pradesh',
       price: '₹18,200',
       image: coorgImg,
-      amenities: ['Coffee Plantation', 'Private Plunge Pool', 'Trekking'],
+      amenities: ['Lush Gardens', 'Private Plunge Pool', 'Riverside Yoga'],
       badge: 'AI Choice'
     },
     {
-      title: 'The Deccan Grand',
-      location: 'Hyderabad, Telangana',
-      price: '₹15,890',
+      title: 'Raj Mahal The Palace',
+      location: 'Orchha, Madhya Pradesh',
+      price: '₹32,890',
       image: hydImg,
-      amenities: ['Sky Deck', 'Fine Dining', 'Elite Concierge'],
+      amenities: ['Royal Suite', 'Fine Dining', 'Elite Butler'],
       badge: 'Trending'
     }
   ];
