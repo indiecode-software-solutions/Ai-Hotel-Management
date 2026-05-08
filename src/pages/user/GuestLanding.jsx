@@ -21,7 +21,7 @@ const GuestLanding = () => {
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  
+
   const { user, signOut } = useAuth();
 
   useEffect(() => {
@@ -131,8 +131,8 @@ const GuestLanding = () => {
           ) : (
             <button className="guest-auth-btn primary" onClick={() => setIsAuthModalOpen(true)}>Sign In</button>
           )}
-          <button 
-            className="mobile-menu-toggle" 
+          <button
+            className="mobile-menu-toggle"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle Menu"
           >
@@ -154,7 +154,7 @@ const GuestLanding = () => {
               <X size={32} />
             </button>
           </div>
-          
+
           <nav className="mobile-nav-links">
             <a href="#destinations" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>
               <span className="link-num">01</span>
@@ -191,7 +191,7 @@ const GuestLanding = () => {
 
       {/* Immersive Hero Section */}
       <section className="hero-viewport">
-        <div 
+        <div
           className="hero-visual-layer"
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
         >
@@ -199,7 +199,7 @@ const GuestLanding = () => {
           <div className="hero-overlay-gradient"></div>
         </div>
 
-        <div 
+        <div
           className="hero-content-layer"
           style={{ transform: `translateY(${scrollY * 0.15}px)` }}
         >
@@ -228,7 +228,7 @@ const GuestLanding = () => {
             </div>
 
             <div className="search-suggestions">
-              <button onClick={() => navigate('/search?query=Resorts+in+Coorg')}>Coorg</button>
+              <button onClick={() => navigate('/search?query=Resorts+in+Orchha')}>Orchha</button>
               <button onClick={() => navigate('/search?query=Heritage+in+Hampi')}>Hampi</button>
               <button onClick={() => navigate('/search?query=Palaces+in+Mysore')}>Mysore</button>
               <button onClick={() => navigate('/search?query=Suites+in+Hyderabad')}>Hyderabad</button>
@@ -278,7 +278,7 @@ const GuestLanding = () => {
                     ))}
                     {hotel.amenities.length > 1 && <span>+{hotel.amenities.length - 1}</span>}
                   </div>
-                  <button 
+                  <button
                     className="reserve-action"
                     onClick={() => openBooking(hotel)}
                   >
@@ -341,15 +341,15 @@ const GuestLanding = () => {
         </div>
       </footer>
 
-      <BookingModal 
-        isOpen={isBookingOpen} 
-        onClose={() => setIsBookingOpen(false)} 
+      <BookingModal
+        isOpen={isBookingOpen}
+        onClose={() => setIsBookingOpen(false)}
         hotel={selectedHotel}
       />
 
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </div>
   );
