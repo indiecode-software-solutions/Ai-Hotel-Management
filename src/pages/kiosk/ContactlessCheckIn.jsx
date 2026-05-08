@@ -150,30 +150,47 @@ const ContactlessCheckIn = () => {
 
         <div className="kiosk-content">
           {!isScanning && !match ? (
-            <div className="welcome-view">
-              <h1>Welcome Home.</h1>
-              <p>Step closer for instant, contactless check-in.</p>
-              <button className="btn-start-scan" onClick={startVideo}>
-                <Camera size={24} />
-                <span>Start Identity Verification</span>
+            <div className="welcome-view cinematic">
+              <div className="ai-core">
+                <div className="core-inner" />
+                <div className="core-ring" />
+                <div className="core-particles" />
+              </div>
+              <h1 className="welcome-title">Welcome Home.</h1>
+              <p className="welcome-subtitle">Step into the light for instant biometric verification.</p>
+              <button className="btn-start-scan premium" onClick={startVideo}>
+                <div className="btn-glow" />
+                <Camera size={20} />
+                <span>Begin Identity Scan</span>
               </button>
             </div>
           ) : match ? (
             <div className="match-view">
               {match.status === 'checked_in' || match.status === 'checked_out' ? (
-                <div className={`success-state ${match.status}`}>
-                  <div className="success-icon">
-                    {match.status === 'checked_in' ? <UserCheck size={60} /> : <LogIn size={60} style={{ transform: 'rotate(180deg)' }} />}
+                <div className={`success-view-cinematic ${match.status}`}>
+                  <div className="success-header">
+                    <div className="success-icon-wrap">
+                      {match.status === 'checked_in' ? <UserCheck size={48} /> : <LogIn size={48} style={{ transform: 'rotate(180deg)' }} />}
+                    </div>
+                    <h2 className="success-title">{match.status === 'checked_in' ? 'Sanctuary Authorized' : 'Journey Concluded'}</h2>
+                    <p className="success-subtitle">
+                      Namaste, <strong>{match.users?.full_name}</strong>. 
+                      You have been successfully {match.status.replace('_', ' ')}.
+                    </p>
                   </div>
-                  <h2>{match.status === 'checked_in' ? 'Welcome Home.' : 'Farewell.'}</h2>
-                  <p>Namaste, <strong>{match.users?.full_name}</strong>. You have been automatically <strong>{match.status.replace('_', ' ')}</strong>.</p>
-                  
-                  <div className="room-info-card">
-                    <span className="label">{match.status === 'checked_in' ? 'Your Sanctuary' : 'Previous Stay'}</span>
-                    <span className="value">{match.rooms?.title}</span>
+
+                  <div className="booking-details-grid">
+                    <div className="detail-card glass">
+                      <span className="detail-label">{match.status === 'checked_in' ? 'Assigned Sanctuary' : 'Previous Sanctuary'}</span>
+                      <span className="detail-value">{match.rooms?.title}</span>
+                    </div>
+                    <div className="detail-card glass">
+                      <span className="detail-label">Status</span>
+                      <span className="detail-value text-accent">{match.status === 'checked_in' ? 'ACCESS GRANTED' : 'CLEARED'}</span>
+                    </div>
                   </div>
-                  
-                  <button className="btn-reset" onClick={() => { setMatch(null); setIsScanning(false); fetchActiveBookings(); }}>
+
+                  <button className="btn-reset-minimal" onClick={() => { setMatch(null); setIsScanning(false); fetchActiveBookings(); }}>
                     Return to Welcome Screen
                   </button>
                 </div>
