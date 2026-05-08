@@ -398,47 +398,43 @@ const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
       case 4:
         return (
           <div className="step-enter identity-step">
-            <h3 className="step-title">Contactless Check-in Setup</h3>
-            <p className="step-subtitle">Enable instant check-in by capturing a secure digital identity. This is optional but recommended for a premium experience.</p>
+            <h3 className="step-title">Digital Identity</h3>
+            <p className="step-subtitle">Secure your stay with an instant, biometric-enabled check-in.</p>
             
             <div className="identity-setup-container">
               {!formData.faceDescriptor ? (
-                <div className="camera-portal">
+                <div className="camera-portal minimal" onClick={!isCameraActive ? startCamera : undefined}>
                   {isCameraActive ? (
                     <div className="video-wrap">
                       <video ref={videoRef} autoPlay muted />
-                      <div className="face-guide" />
-                      <button className="btn-capture" onClick={captureIdentity} disabled={isAnalyzingFace}>
-                        {isAnalyzingFace ? <Loader2 className="animate-spin" /> : <Camera size={24} />}
+                      <div className="face-guide-minimal" />
+                      <button className="btn-capture-minimal" onClick={captureIdentity} disabled={isAnalyzingFace}>
+                        {isAnalyzingFace ? <Loader2 className="animate-spin" size={20} /> : <Camera size={20} />}
                       </button>
                     </div>
                   ) : (
-                    <div className="camera-placeholder" onClick={startCamera}>
-                      <Camera size={48} className="text-accent" />
-                      <p>Activate Camera for Digital ID</p>
+                    <div className="camera-trigger">
+                      <div className="icon-pulse">
+                        <Camera size={32} className="text-accent" />
+                      </div>
+                      <span>Enable Identity Verification</span>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="identity-success">
-                  <div className="success-badge">
-                    <UserCheck size={32} />
+                <div className="identity-success-minimal">
+                  <div className="success-icon-minimal">
+                    <UserCheck size={24} />
                   </div>
-                  <h4>Identity Secured</h4>
-                  <p>Your biometric descriptor has been generated locally and will be used for instant recognition upon arrival.</p>
-                  <button className="btn-retake" onClick={() => { setFormData({...formData, faceDescriptor: null}); setIsCameraActive(false); }}>
-                    Retake Selfie
+                  <p>Identity Encrypted & Secured</p>
+                  <button className="btn-reset-minimal" onClick={() => { setFormData({...formData, faceDescriptor: null}); setIsCameraActive(false); }}>
+                    Reset
                   </button>
                 </div>
               )}
             </div>
 
             {faceError && <p className="face-error">{faceError}</p>}
-            
-            <div className="privacy-notice">
-              <Shield size={14} />
-              <span>Biometric data is processed on-device and stored as secure mathematical descriptors.</span>
-            </div>
           </div>
         );
       case 5:

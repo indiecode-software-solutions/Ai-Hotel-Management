@@ -802,3 +802,95 @@
   background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
 }
+
+/* Minimal Identity UI */
+.camera-portal.minimal {
+  max-width: 320px;
+  aspect-ratio: 16/10;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.camera-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.icon-pulse {
+  padding: 15px;
+  background: rgba(212, 175, 55, 0.05);
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  transition: all 0.3s ease;
+}
+
+.camera-portal.minimal:hover .icon-pulse {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: rgba(212, 175, 55, 0.3);
+  transform: scale(1.1);
+}
+
+.face-guide-minimal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 180px;
+  border: 1px dashed rgba(212, 175, 55, 0.4);
+  border-radius: 40%;
+  box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.6);
+}
+
+.btn-capture-minimal {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--text-accent);
+  color: #000;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.identity-success-minimal {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(16, 185, 129, 0.05);
+  padding: 12px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.success-icon-minimal {
+  color: #10b981;
+}
+
+.identity-success-minimal p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #10b981;
+}
+
+.btn-reset-minimal {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
