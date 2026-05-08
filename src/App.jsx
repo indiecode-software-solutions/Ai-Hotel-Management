@@ -21,7 +21,7 @@ function AppContent() {
   const [splashState, setSplashState] = useState('visible'); // visible, animating, hidden
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
-  const isGuestPortalRoute = location.pathname === '/my-stays';
+  const isGuestPortalRoute = location.pathname.startsWith('/my-stays');
   const isOnboardingRoute = location.pathname === '/onboarding' || location.pathname.startsWith('/onboarding/');
 
   React.useEffect(() => {
@@ -48,7 +48,7 @@ function AppContent() {
       {/* Put Sidebar at the root - only for Admin routes */}
       {splashState !== 'visible' && isAdminRoute && <Sidebar />}
 
-      <div className={!isAdminRoute && !isOnboardingRoute && !isGuestPortalRoute ? 'guest-app-container' : (splashState === 'hidden' ? 'app-content-stable' : `app-transition-container ${splashState}`)}>
+      <div className={!isAdminRoute && !isOnboardingRoute && !isGuestPortalRoute ? 'guest-app-container' : (splashState === 'hidden' || isAdminRoute || isGuestPortalRoute ? 'app-content-stable' : `app-transition-container ${splashState}`)}>
         <Routes>
           {/* Guest / Public Routes (Now Root) */}
           <Route path="/" element={<GuestLanding />} />

@@ -222,7 +222,12 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
                 </div>
               </div>
             </div>
-            <div className="input-group" style={{ marginTop: '30px' }}>
+            {(!formData.checkIn || !formData.checkOut) && (
+              <p className="validation-warning" style={{ color: 'var(--text-accent)', fontSize: '0.75rem', marginTop: '10px', display: 'flex', alignItems: 'center', gap: '6px', opacity: 0.8 }}>
+                <Lock size={12} /> Selection of arrival & departure dates is required to reveal sanctuaries.
+              </p>
+            )}
+            <div className="input-group" style={{ marginTop: '20px' }}>
               <label>Number of Guests</label>
               <div className="premium-input-wrap">
                 <Users size={18} className="text-accent" />
