@@ -173,30 +173,35 @@ const ContactlessCheckIn = () => {
                 </div>
               ) : (
                 <div className="confirm-state">
-                  <h2>Identity Verified</h2>
-                  <div className="guest-info">
-                    <p className="guest-name">{match.users?.full_name}</p>
+                  <div className="verification-ring">
+                    <UserCheck className="text-accent" size={40} />
+                  </div>
+                  <h2 className="identity-title">Identity Verified</h2>
+                  <div className="guest-profile">
+                    <h3 className="guest-name">{match.users?.full_name}</h3>
                     <p className="guest-email">{match.users?.email}</p>
                   </div>
-                  <div className="booking-summary">
-                    <div className="summary-item">
-                      <span className="label">Stay</span>
-                      <span className="value">{match.rooms?.title}</span>
+                  
+                  <div className="booking-details-grid">
+                    <div className="detail-card">
+                      <span className="detail-label">Assigned Sanctuary</span>
+                      <span className="detail-value">{match.rooms?.title}</span>
                     </div>
-                    <div className="summary-item">
-                      <span className="label">Check-out</span>
-                      <span className="value">{match.check_out_date}</span>
+                    <div className="detail-card">
+                      <span className="detail-label">Departure Date</span>
+                      <span className="detail-value">{match.check_out_date}</span>
                     </div>
                   </div>
+
                   <button className="btn-checkin" onClick={handleCheckIn} disabled={isCheckingIn}>
                     {isCheckingIn ? (
-                      <><Loader2 className="animate-spin" size={20} /> Finalizing...</>
+                      <><Loader2 className="animate-spin" size={20} /> Authorizing Neural Link...</>
                     ) : (
-                      <><LogIn size={20} /> Complete Check-in</>
+                      <><LogIn size={20} /> Confirm & Enter Sanctuary</>
                     )}
                   </button>
                   <button className="btn-cancel" onClick={() => { setMatch(null); startVideo(); }}>
-                    Not me? Scan again
+                    Incorrect Profile? Re-scan
                   </button>
                 </div>
               )}
