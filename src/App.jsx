@@ -16,6 +16,7 @@ import Sidebar from './components/layout/Sidebar';
 import GuestLanding from './pages/user/GuestLanding';
 import GuestSearch from './pages/user/GuestSearch';
 import VendorOnboarding from './pages/vendor/VendorOnboarding';
+import AiChatWidget from './components/ui/AiChatWidget';
 
 function AppContent() {
   const [splashState, setSplashState] = useState('visible'); // visible, animating, hidden
@@ -70,6 +71,11 @@ function AppContent() {
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+
+        {/* Global AI Chat Assistant for Guests */}
+        {!isAdminRoute && !isOnboardingRoute && splashState === 'hidden' && (
+          <AiChatWidget />
+        )}
       </div>
     </>
   );

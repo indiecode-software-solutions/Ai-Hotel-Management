@@ -92,3 +92,51 @@ export const analyzePricing = async (occupancyData, marketTrends) => {
     return { summary: response, adjustments: [], tip: "" };
   }
 };
+
+export const chatWithAssistant = async (messages) => {
+  const models = [
+    OPENROUTER_MODEL,
+    "openai/gpt-oss-20b:free",
+    "openrouter/free",
+    "google/gemma-4-26b-a4b-it:free"
+  ];
+
+  const systemPrompt = {
+    role: "system",
+    content: "You are the AI Concierge for Raj Heritage Hospitality. You are extremely polite, elegant, and helpful. You assist guests with enquiries about the hotel, room types (Luxury Suites, Heritage Rooms), amenities, and booking procedures. Keep responses concise (under 3 sentences unless explaining details). If a guest wants to book a room, instruct them to 'Browse our hand-picked collection on the home page and click Reserve on the property that catches your eye.' Do not use markdown formatting like bold or italics in your responses, keep it plain text for the chat interface."
+  };
+
+  const formattedMessages = [systemPrompt, ...messages];
+
+  for (const model of models) {
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "http://localhost:5173",
+          "X-Title": "Raj Heritage Hospitality",
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: formattedMessages,
+        })
+      });
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const data = await response.json();
+      
+      if (data.choices && data.choices.length > 0) {
+        return data.choices[0].message.content;
+      }
+    } catch (error) {
+      console.error(`Error with model ${model} in chat:`, error);
+    }
+  }
+
+  return "I apologize, but our concierge system is currently experiencing high volume. Please try asking your question again in a moment.";
+};
