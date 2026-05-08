@@ -7,6 +7,10 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+  // DEVELOPER MODE: All authentication and role restrictions are disabled
+  return children;
+
+  /*
   if (loading) {
     // Show a loading state or the splash screen while checking auth
     return <SplashScreen currentState="visible" />;
@@ -18,12 +22,14 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
     return <Navigate to="/" state={{ from: location, openAuth: true }} replace />;
   }
 
+  // FOR DEVELOPMENT: Admin restriction bypassed
+  
   if (requireAdmin && user.user_metadata?.role !== 'admin') {
-    // If they are logged in but not an admin, don't let them see the admin routes
     return <Navigate to="/" replace />;
   }
 
   return children;
+  */
 };
 
 export default ProtectedRoute;
