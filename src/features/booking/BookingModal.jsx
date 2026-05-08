@@ -129,6 +129,11 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
       return;
     }
 
+    if (!formData.checkIn || !formData.checkOut || !formData.roomType) {
+      alert('Missing stay details. Please go back and complete the dates and room selection.');
+      return;
+    }
+
     if (!window.Razorpay) {
       alert('Payment system is loading. Please wait or refresh.');
       return;
@@ -442,7 +447,10 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
                 <button 
                   className="btn-next" 
                   onClick={nextStep}
-                  disabled={step === 2 && !formData.roomType}
+                  disabled={
+                    (step === 1 && (!formData.checkIn || !formData.checkOut)) || 
+                    (step === 2 && !formData.roomType)
+                  }
                 >
                   {step === 4 ? 'Proceed to Checkout' : 'Continue'} <ChevronRight size={18} />
                 </button>
