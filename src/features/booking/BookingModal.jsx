@@ -117,8 +117,18 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
     });
   };
 
+  const getNumberOfNights = () => {
+    if (!formData.checkIn || !formData.checkOut) return 1;
+    const checkInDate = new Date(formData.checkIn).setHours(0, 0, 0, 0);
+    const checkOutDate = new Date(formData.checkOut).setHours(0, 0, 0, 0);
+    const diffTime = checkOutDate - checkInDate;
+    const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+    return diffDays;
+  };
+
   const calculateTotal = () => {
-    let total = formData.roomType ? formData.roomType.price : 0;
+    const nights = getNumberOfNights();
+    let total = formData.roomType ? formData.roomType.price * nights : 0;
     formData.addons.forEach(a => total += a.price);
     return total;
   };
@@ -318,7 +328,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
                 </div>
                 <div className="summary-item">
                   <span className="label">Dates</span>
-                  <span className="value">{formData.checkIn} — {formData.checkOut}</span>
+                  <span className="value">{formData.checkIn} — {formData.checkOut} ({getNumberOfNights()} Night{getNumberOfNights() > 1 ? 's' : ''})</span>
                 </div>
                 <div className="summary-item">
                   <span className="label">Sanctuary</span>
@@ -373,8 +383,8 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
                 <h3 className="step-title">Secure Checkout</h3>
                 <div className="checkout-breakdown">
                   <div className="checkout-item">
-                    <span>{formData.roomType?.name} (Base Price)</span>
-                    <span>₹{formData.roomType?.price.toLocaleString()}</span>
+                    <span>{formData.roomType?.name} ({getNumberOfNights()} Night{getNumberOfNights() > 1 ? 's' : ''})</span>
+                    <span>₹{((formData.roomType?.price || 0) * getNumberOfNights()).toLocaleString()}</span>
                   </div>
                   {formData.addons.map(a => (
                     <div key={a.id} className="checkout-item addon">
