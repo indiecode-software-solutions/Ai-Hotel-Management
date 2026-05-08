@@ -49,7 +49,7 @@ const MyStays = () => {
     revealElements.forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
-  }, [bookings, isLoading]); // Re-run when content changes
+  }, [bookings, isLoading, activeTab]); // Re-run when content or tabs change
 
   const fetchMyBookings = async () => {
     setIsLoading(true);
