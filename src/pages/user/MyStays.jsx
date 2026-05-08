@@ -202,9 +202,9 @@ const MyStays = () => {
                   className="stay-card relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all hover:border-accent-gold/30 stay-reveal"
                   style={{ transitionDelay: `${idx * 0.1}s` }}
                 >
-                  <div className="flex flex-col md:flex-row">
+                  <div className="stay-card-inner">
                     {/* Media Section */}
-                    <div className="w-full md:w-80 h-64 md:h-auto relative overflow-hidden">
+                    <div className="stay-card-media">
                       <img 
                         src={booking.rooms?.image_url || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80'} 
                         alt={booking.rooms?.title}
@@ -219,7 +219,7 @@ const MyStays = () => {
                     </div>
 
                     {/* Content Section */}
-                    <div className="flex-1 p-8 flex flex-col justify-between">
+                    <div className="stay-card-content">
                       <div>
                         <div className="flex justify-between items-start mb-4">
                           <div>
@@ -396,6 +396,41 @@ const MyStays = () => {
           background: var(--accent-gold);
           color: var(--surface-base);
           box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .stay-card-inner {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .stay-card-media {
+          width: 100%;
+          height: 250px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .stay-card-content {
+          flex: 1;
+          padding: 2rem;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+          .stay-card-inner {
+            flex-direction: row;
+          }
+          .stay-card-media {
+            width: 320px;
+            height: auto;
+            min-height: 250px;
+          }
+        }
+
+        .card-image {
+          transition: transform 0.7s ease;
         }
 
         .stay-card:hover .card-image {
