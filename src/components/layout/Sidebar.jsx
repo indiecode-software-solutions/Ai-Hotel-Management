@@ -36,6 +36,7 @@ export const Sidebar = () => {
           <NavLink
             key={item.name}
             to={item.path}
+            end={item.path === '/admin'}
             className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
           >
             {({ isActive }) => (

@@ -18,12 +18,12 @@
   --action-accent: #d4af37;
 
   /* BORDERS */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.15);
 
   /* EFFECTS */
-  --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.35);
-  --blur-glass: blur(14px);
+  --shadow-soft: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --blur-glass: blur(20px);
 
   /* GRADIENTS */
   --gradient-primary: linear-gradient(135deg, #0077b6, #00b4d8);
