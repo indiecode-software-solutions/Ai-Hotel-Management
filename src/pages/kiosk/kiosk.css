@@ -345,3 +345,35 @@ video {
   text-align: center;
   padding: 40px;
 }
+
+/* Automated Processing State */
+.processing-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.scanning-ring {
+  width: 80px;
+  height: 80px;
+  border: 4px solid rgba(212, 175, 55, 0.1);
+  border-top-color: var(--text-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.success-state.checked_out .success-icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
+}
+
+.success-state.checked_out .room-info-card {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.05);
+}

@@ -39,11 +39,11 @@ const ContactlessCheckIn = () => {
 
   const fetchActiveBookings = async () => {
     try {
-      // Fetch bookings that are confirmed but not yet checked in
+      // Fetch bookings that are confirmed OR checked_in
       const { data, error } = await supabase
         .from('bookings')
         .select('*, users!guest_id(full_name, email), rooms(*)')
-        .eq('status', 'confirmed');
+        .in('status', ['confirmed', 'checked_in']);
       
       if (error) throw error;
       setBookings(data || []);
@@ -111,21 +111,25 @@ const ContactlessCheckIn = () => {
     if (bestMatch) {
       setMatch(bestMatch);
       stopVideo();
+      // Automatically trigger the status transition
+      handleStatusTransition(bestMatch);
     }
   };
 
-  const handleCheckIn = async () => {
-    if (!match) return;
+  const handleStatusTransition = async (booking) => {
     setIsCheckingIn(true);
+    const newStatus = booking.status === 'checked_in' ? 'checked_out' : 'checked_in';
+    
     try {
-      await bookingService.updateBookingStatus(match.id, 'checked_in');
+      await bookingService.updateBookingStatus(booking.id, newStatus);
+      // Wait for animation feel
       setTimeout(() => {
-        setMatch({ ...match, status: 'checked_in' });
+        setMatch({ ...booking, status: newStatus });
         setIsCheckingIn(false);
-      }, 1500);
+      }, 2000);
     } catch (err) {
-      console.error("Check-in failed:", err);
-      setError("System failed to update your status. Please see staff.");
+      console.error("Transition failed:", err);
+      setError("System failure during status update. Please see staff.");
       setIsCheckingIn(false);
     }
   };
@@ -156,55 +160,30 @@ const ContactlessCheckIn = () => {
             </div>
           ) : match ? (
             <div className="match-view">
-              {match.status === 'checked_in' ? (
-                <div className="success-state">
+              {match.status === 'checked_in' || match.status === 'checked_out' ? (
+                <div className={`success-state ${match.status}`}>
                   <div className="success-icon">
-                    <UserCheck size={60} />
+                    {match.status === 'checked_in' ? <UserCheck size={60} /> : <LogIn size={60} style={{ transform: 'rotate(180deg)' }} />}
                   </div>
-                  <h2>Check-in Complete!</h2>
-                  <p>Namaste, <strong>{match.users?.full_name}</strong>. Your sanctuary is ready.</p>
+                  <h2>{match.status === 'checked_in' ? 'Welcome Home.' : 'Farewell.'}</h2>
+                  <p>Namaste, <strong>{match.users?.full_name}</strong>. You have been automatically <strong>{match.status.replace('_', ' ')}</strong>.</p>
+                  
                   <div className="room-info-card">
-                    <span className="label">Your Room</span>
+                    <span className="label">{match.status === 'checked_in' ? 'Your Sanctuary' : 'Previous Stay'}</span>
                     <span className="value">{match.rooms?.title}</span>
                   </div>
-                  <button className="btn-reset" onClick={() => { setMatch(null); setIsScanning(false); fetchActiveBookings(); }}>
-                    New Guest
-                  </button>
-                </div>
-              ) : (
-                <div className="confirm-state">
-                  <div className="verification-ring">
-                    <UserCheck className="text-accent" size={40} />
-                  </div>
-                  <h2 className="identity-title">Identity Verified</h2>
-                  <div className="guest-profile">
-                    <h3 className="guest-name">{match.users?.full_name}</h3>
-                    <p className="guest-email">{match.users?.email}</p>
-                  </div>
                   
-                  <div className="booking-details-grid">
-                    <div className="detail-card">
-                      <span className="detail-label">Assigned Sanctuary</span>
-                      <span className="detail-value">{match.rooms?.title}</span>
-                    </div>
-                    <div className="detail-card">
-                      <span className="detail-label">Departure Date</span>
-                      <span className="detail-value">{match.check_out_date}</span>
-                    </div>
-                  </div>
-
-                  <button className="btn-checkin" onClick={handleCheckIn} disabled={isCheckingIn}>
-                    {isCheckingIn ? (
-                      <><Loader2 className="animate-spin" size={20} /> Authorizing Neural Link...</>
-                    ) : (
-                      <><LogIn size={20} /> Confirm & Enter Sanctuary</>
-                    )}
-                  </button>
-                  <button className="btn-cancel" onClick={() => { setMatch(null); startVideo(); }}>
-                    Incorrect Profile? Re-scan
+                  <button className="btn-reset" onClick={() => { setMatch(null); setIsScanning(false); fetchActiveBookings(); }}>
+                    Return to Welcome Screen
                   </button>
                 </div>
-              )}
+              ) : isCheckingIn ? (
+                <div className="processing-state">
+                  <div className="scanning-ring" />
+                  <h2>Authenticating...</h2>
+                  <p>Matching biometric signature for {match.users?.full_name}</p>
+                </div>
+              ) : null}
             </div>
           ) : (
             <div className="scanning-view">
