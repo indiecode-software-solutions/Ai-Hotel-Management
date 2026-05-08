@@ -51,24 +51,31 @@ const AiChatWidget = () => {
 
   const speakResponse = (text) => {
     if (!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
     
-    const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
-    
-    // Prioritize female UK voice for a premium feel
-    const femaleVoice = voices.find(v => 
-      v.name.includes('Google UK English Female') || 
-      (v.name.includes('Female') && v.lang.includes('en-GB')) ||
-      v.name.includes('Samantha') || 
-      v.name.includes('Victoria')
-    );
-    
-    if (femaleVoice) {
-      utterance.voice = femaleVoice;
+    const speak = () => {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      const voices = window.speechSynthesis.getVoices();
+      
+      // Strictly prioritize Google UK English Female
+      const targetVoice = voices.find(v => v.name === 'Google UK English Female' || v.name.includes('Google UK English Female'));
+      
+      if (targetVoice) {
+        utterance.voice = targetVoice;
+      } else {
+        // Fallback
+        utterance.lang = 'en-GB';
+        utterance.pitch = 1.1;
+      }
+      
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = speak;
+    } else {
+      speak();
     }
-    
-    window.speechSynthesis.speak(utterance);
   };
 
   const startListening = (e) => {
