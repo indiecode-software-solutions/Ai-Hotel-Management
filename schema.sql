@@ -35,7 +35,15 @@ create table public.rooms (
   base_price numeric not null,
   capacity integer not null default 2,
   amenities jsonb default '[]'::jsonb,
-  status text check (status in ('available', 'maintenance')) default 'available',
+  status text check (status in ('available', 'maintenance', 'booked')) default 'available',
+  title text,
+  location text,
+  image_url text,
+  vibe text,
+  description text,
+  rating numeric,
+  latitude numeric,
+  longitude numeric,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -65,6 +73,7 @@ create table public.bookings (
   check_out_date date not null,
   total_price numeric not null,
   status text check (status in ('pending', 'confirmed', 'cancelled', 'checked_in', 'checked_out')) default 'pending',
+  payment_id text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
