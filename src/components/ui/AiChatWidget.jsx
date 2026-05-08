@@ -38,7 +38,17 @@ const AiChatWidget = () => {
         content: msg.content
       }));
 
-      const aiResponse = await chatWithAssistant(apiMessages);
+      let aiResponse = await chatWithAssistant(apiMessages);
+      
+      // Parse for Agentic Actions
+      if (aiResponse.includes('[ACTION:OPEN_BOOKING]')) {
+        aiResponse = aiResponse.replace('[ACTION:OPEN_BOOKING]', '').trim();
+        window.dispatchEvent(new CustomEvent('ai-action-book'));
+      }
+      if (aiResponse.includes('[ACTION:SCROLL_COLLECTION]')) {
+        aiResponse = aiResponse.replace('[ACTION:SCROLL_COLLECTION]', '').trim();
+        window.dispatchEvent(new CustomEvent('ai-action-scroll'));
+      }
       
       setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
     } catch (error) {

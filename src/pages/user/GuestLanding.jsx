@@ -58,9 +58,32 @@ const GuestLanding = () => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = '';
     }
+    return () => { document.body.style.overflow = ''; };
   }, [isMenuOpen]);
+
+  // Listen for AI Agentic Actions
+  useEffect(() => {
+    const handleAiBook = () => {
+      openBooking(featuredHotels[0]);
+    };
+    
+    const handleAiScroll = () => {
+      const collectionSection = document.getElementById('hotels');
+      if (collectionSection) {
+        collectionSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener('ai-action-book', handleAiBook);
+    window.addEventListener('ai-action-scroll', handleAiScroll);
+
+    return () => {
+      window.removeEventListener('ai-action-book', handleAiBook);
+      window.removeEventListener('ai-action-scroll', handleAiScroll);
+    };
+  }, []);
 
   const featuredHotels = [
     {
