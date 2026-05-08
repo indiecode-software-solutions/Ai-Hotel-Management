@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { X, Calendar, Users, ChevronRight, Check, Sparkles, Plane, Coffee, Wind, Shield, ArrowLeft, Loader2, CreditCard, Lock, Camera, UserCheck } from 'lucide-react';
 import * as faceapi from 'face-api.js';
 import './booking.css';
