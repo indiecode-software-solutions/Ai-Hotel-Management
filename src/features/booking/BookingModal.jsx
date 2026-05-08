@@ -8,7 +8,7 @@ import room1 from '../../assets/Super Deluxe Room.jpeg';
 import room2 from '../../assets/DSC00831 (1).JPG';
 import room3 from '../../assets/Garden.png';
 
-const BookingModal = ({ hotel, isOpen, onClose }) => {
+const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
   const { user } = useAuth();
   const [step, setStep] = useState(1);
   const [rooms, setRooms] = useState([]);
@@ -38,11 +38,20 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
       fetchRooms();
+      
+      if (initialData) {
+        setFormData(prev => ({
+          ...prev,
+          checkIn: initialData.checkIn || prev.checkIn,
+          checkOut: initialData.checkOut || prev.checkOut,
+          guests: initialData.guests || prev.guests
+        }));
+      }
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen]);
+  }, [isOpen, initialData]);
 
   const fetchRooms = async () => {
     setIsLoadingRooms(true);

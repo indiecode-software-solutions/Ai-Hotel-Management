@@ -41,10 +41,22 @@ const AiChatWidget = () => {
       let aiResponse = await chatWithAssistant(apiMessages);
       
       // Parse for Agentic Actions
-      if (aiResponse.includes('[ACTION:OPEN_BOOKING]')) {
+      const bookingRegex = /\[ACTION:OPEN_BOOKING:(.*?)]/;
+      const bookingMatch = aiResponse.match(bookingRegex);
+      
+      if (bookingMatch) {
+        try {
+          const payload = JSON.parse(bookingMatch[1]);
+          aiResponse = aiResponse.replace(bookingMatch[0], '').trim();
+          window.dispatchEvent(new CustomEvent('ai-action-book', { detail: payload }));
+        } catch (e) {
+          console.error("Failed to parse booking payload", e);
+        }
+      } else if (aiResponse.includes('[ACTION:OPEN_BOOKING]')) {
         aiResponse = aiResponse.replace('[ACTION:OPEN_BOOKING]', '').trim();
         window.dispatchEvent(new CustomEvent('ai-action-book'));
       }
+      
       if (aiResponse.includes('[ACTION:SCROLL_COLLECTION]')) {
         aiResponse = aiResponse.replace('[ACTION:SCROLL_COLLECTION]', '').trim();
         window.dispatchEvent(new CustomEvent('ai-action-scroll'));

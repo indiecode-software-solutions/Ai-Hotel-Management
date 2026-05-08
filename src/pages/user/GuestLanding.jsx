@@ -21,6 +21,7 @@ const GuestLanding = () => {
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [initialBookingData, setInitialBookingData] = useState(null);
 
   const { user, signOut } = useAuth();
 
@@ -65,7 +66,10 @@ const GuestLanding = () => {
 
   // Listen for AI Agentic Actions
   useEffect(() => {
-    const handleAiBook = () => {
+    const handleAiBook = (e) => {
+      if (e.detail) {
+        setInitialBookingData(e.detail);
+      }
       openBooking(featuredHotels[0]);
     };
     
@@ -366,8 +370,12 @@ const GuestLanding = () => {
 
       <BookingModal
         isOpen={isBookingOpen}
-        onClose={() => setIsBookingOpen(false)}
+        onClose={() => {
+          setIsBookingOpen(false);
+          setInitialBookingData(null);
+        }}
         hotel={selectedHotel}
+        initialData={initialBookingData}
       />
 
       <AuthModal
