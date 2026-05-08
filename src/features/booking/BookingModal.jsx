@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Calendar, Users, ChevronRight, Check, Sparkles, Plane, Coffee, Wind, Shield, ArrowLeft, Loader2, CreditCard, Lock } from 'lucide-react';
+import { X, Calendar, Users, ChevronRight, Check, Sparkles, Plane, Coffee, Wind, Shield, ArrowLeft, Loader2, CreditCard, Lock, Camera, UserCheck } from 'lucide-react';
+import * as faceapi from 'face-api.js';
 import './booking.css';
 import { roomService } from '../../services/roomService';
 import { bookingService } from '../../services/bookingService';
@@ -20,8 +20,15 @@ const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
     checkOut: '',
     guests: 2,
     roomType: null,
-    addons: []
+    addons: [],
+    faceDescriptor: null,
+    selfieUrl: null
   });
+
+  const [isCameraActive, setIsCameraActive] = useState(false);
+  const [isAnalyzingFace, setIsAnalyzingFace] = useState(false);
+  const [faceError, setFaceError] = useState(null);
+  const videoRef = useRef(null);
 
   const checkInRef = useRef(null);
   const checkOutRef = useRef(null);
@@ -30,7 +37,7 @@ const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
     { id: 1, label: 'Stay Details' },
     { id: 2, label: 'Sanctuary' },
     { id: 3, label: 'Enhancements' },
-    { id: 4, label: 'Review' },
+    { id: 4, label: 'Identity' },
     { id: 5, label: 'Checkout' }
   ];
 
@@ -142,6 +149,66 @@ const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
     return total;
   };
 
+  const startCamera = async () => {
+    setIsCameraActive(true);
+    setFaceError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoRef.current) videoRef.current.srcObject = stream;
+    } catch (err) {
+      console.error(err);
+      setFaceError("Camera access denied. Please enable it to use this feature.");
+      setIsCameraActive(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const tracks = videoRef.current.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+    }
+    setIsCameraActive(false);
+  };
+
+  const captureIdentity = async () => {
+    if (!videoRef.current) return;
+    setIsAnalyzingFace(true);
+    setFaceError(null);
+
+    try {
+      // Ensure models are loaded
+      const MODEL_URL = '/models';
+      if (!faceapi.nets.ssdMobilenetv1.params) {
+        await Promise.all([
+          faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+        ]);
+      }
+
+      const detections = await faceapi.detectSingleFace(videoRef.current)
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (!detections) {
+        setFaceError("Face not detected. Please ensure your face is clearly visible in the guide.");
+        setIsAnalyzingFace(false);
+        return;
+      }
+
+      setFormData({
+        ...formData,
+        faceDescriptor: detections.descriptor
+      });
+      stopCamera();
+    } catch (err) {
+      console.error(err);
+      setFaceError("Neural engine failed. Please try again.");
+    } finally {
+      setIsAnalyzingFace(false);
+    }
+  };
+
   const handlePayment = async () => {
     if (!user) {
       alert('Please log in to proceed.');
@@ -178,7 +245,9 @@ const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
             check_out_date: formData.checkOut,
             total_price: totalAmount,
             status: 'confirmed',
-            payment_id: response.razorpay_payment_id
+            payment_id: response.razorpay_payment_id,
+            face_descriptor: formData.faceDescriptor ? Array.from(formData.faceDescriptor) : null,
+            selfie_url: formData.selfieUrl
           };
 
           await bookingService.createBooking(bookingData);
@@ -327,41 +396,47 @@ const BookingModal = ({ hotel, isOpen, onClose, initialData }) => {
         );
       case 4:
         return (
-          <div className="step-enter">
-            <h3 className="step-title">Review Your Sanctuary</h3>
-            <div className="summary-card">
-              <div className="summary-section">
-                <div className="summary-item">
-                  <span className="label">Destination</span>
-                  <span className="value">{hotel?.title || 'Raj Heritage Hospitality'}</span>
+          <div className="step-enter identity-step">
+            <h3 className="step-title">Contactless Check-in Setup</h3>
+            <p className="step-subtitle">Enable instant check-in by capturing a secure digital identity. This is optional but recommended for a premium experience.</p>
+            
+            <div className="identity-setup-container">
+              {!formData.faceDescriptor ? (
+                <div className="camera-portal">
+                  {isCameraActive ? (
+                    <div className="video-wrap">
+                      <video ref={videoRef} autoPlay muted />
+                      <div className="face-guide" />
+                      <button className="btn-capture" onClick={captureIdentity} disabled={isAnalyzingFace}>
+                        {isAnalyzingFace ? <Loader2 className="animate-spin" /> : <Camera size={24} />}
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="camera-placeholder" onClick={startCamera}>
+                      <Camera size={48} className="text-accent" />
+                      <p>Activate Camera for Digital ID</p>
+                    </div>
+                  )}
                 </div>
-                <div className="summary-item">
-                  <span className="label">Dates</span>
-                  <span className="value">{formData.checkIn} — {formData.checkOut} ({getNumberOfNights()} Night{getNumberOfNights() > 1 ? 's' : ''})</span>
-                </div>
-                <div className="summary-item">
-                  <span className="label">Sanctuary</span>
-                  <span className="value">{formData.roomType?.name || 'Standard'}</span>
-                </div>
-              </div>
-              
-              {formData.addons.length > 0 && (
-                <div className="summary-section">
-                  <label>Selected Enhancements</label>
-                  <div className="summary-addons">
-                    {formData.addons.map(a => (
-                      <div key={a.id} className="summary-addon-pill">
-                        {a.name}
-                      </div>
-                    ))}
+              ) : (
+                <div className="identity-success">
+                  <div className="success-badge">
+                    <UserCheck size={32} />
                   </div>
+                  <h4>Identity Secured</h4>
+                  <p>Your biometric descriptor has been generated locally and will be used for instant recognition upon arrival.</p>
+                  <button className="btn-retake" onClick={() => { setFormData({...formData, faceDescriptor: null}); setIsCameraActive(false); }}>
+                    Retake Selfie
+                  </button>
                 </div>
               )}
             </div>
+
+            {faceError && <p className="face-error">{faceError}</p>}
             
-            <div className="confirmation-notice">
-              <Sparkles size={16} className="text-accent" />
-              <span>Raj Heritage AI has verified this booking for immediate confirmation.</span>
+            <div className="privacy-notice">
+              <Shield size={14} />
+              <span>Biometric data is processed on-device and stored as secure mathematical descriptors.</span>
             </div>
           </div>
         );

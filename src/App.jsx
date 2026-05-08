@@ -17,6 +17,7 @@ import GuestLanding from './pages/user/GuestLanding';
 import GuestSearch from './pages/user/GuestSearch';
 import VendorOnboarding from './pages/vendor/VendorOnboarding';
 import AiChatWidget from './components/ui/AiChatWidget';
+import ContactlessCheckIn from './pages/kiosk/ContactlessCheckIn';
 
 function AppContent() {
   const [splashState, setSplashState] = useState('visible'); // visible, animating, hidden
@@ -67,6 +68,9 @@ function AppContent() {
 
           {/* Vendor Routes */}
           <Route path="/onboarding" element={<VendorOnboarding />} />
+
+          {/* Kiosk Mode */}
+          <Route path="/kiosk" element={<ContactlessCheckIn />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
