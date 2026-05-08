@@ -1,12 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Send, TrendingUp, IndianRupee, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { generateAiResponse } from '../../services/aiService';
+import { bookingService } from '../../services/bookingService';
+import { roomService } from '../../services/roomService';
 
 const AiCommandCenter = () => {
   const [query, setQuery] = useState('');
   const [response, setResponse] = useState(null);
   const [isThinking, setIsThinking] = useState(false);
+  const [metrics, setMetrics] = useState({ occupancy: 0, revpar: 0, demand: 'Medium' });
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(true);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const [rooms, bookings] = await Promise.all([
+          roomService.getRooms(),
+          bookingService.getAllBookings()
+        ]);
+
+        const totalRooms = rooms.length || 1; // Prevent division by zero
+        const today = new Date().setHours(0, 0, 0, 0);
+
+        // Find bookings active today
+        const activeBookings = bookings.filter(b => {
+          const checkIn = new Date(b.check_in_date).setHours(0, 0, 0, 0);
+          const checkOut = new Date(b.check_out_date).setHours(0, 0, 0, 0);
+          // A booking is active if check-in is today or earlier, and check-out is after today
+          return checkIn <= today && checkOut > today && b.status !== 'cancelled';
+        });
+
+        const bookedRoomsCount = activeBookings.length;
+        const occupancyRate = (bookedRoomsCount / totalRooms) * 100;
+
+        let todayRevenue = 0;
+        activeBookings.forEach(b => {
+          const checkIn = new Date(b.check_in_date).setHours(0, 0, 0, 0);
+          const checkOut = new Date(b.check_out_date).setHours(0, 0, 0, 0);
+          const nights = Math.max(1, (checkOut - checkIn) / (1000 * 60 * 60 * 24));
+          const dailyRate = Number(b.total_price) / nights;
+          todayRevenue += dailyRate;
+        });
+
+        const revpar = todayRevenue / totalRooms;
+
+        let demand = 'Low';
+        if (occupancyRate >= 80) demand = 'High';
+        else if (occupancyRate >= 50) demand = 'Medium';
+
+        setMetrics({
+          occupancy: Math.round(occupancyRate),
+          revpar: Math.round(revpar),
+          demand
+        });
+      } catch (error) {
+        console.error("Failed to fetch metrics:", error);
+      } finally {
+        setIsLoadingMetrics(false);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   const suggestions = [
     "Show today's bookings",
@@ -22,7 +78,10 @@ const AiCommandCenter = () => {
     setResponse(null);
     
     try {
-      const res = await generateAiResponse(text, "Admin Dashboard Context: Today is Saturday. Occupancy is 88%. RevPAR is ₹18,500. Next big event: Regional Conference on Monday.");
+      const todayString = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+      const context = `Admin Dashboard Context: Today is ${todayString}. Occupancy is ${metrics.occupancy}%. RevPAR is ₹${metrics.revpar}. Demand is ${metrics.demand}.`;
+      
+      const res = await generateAiResponse(text, context);
       setResponse(res);
     } catch (error) {
       setResponse("Failed to connect to AI command. Please try again.");
@@ -32,9 +91,9 @@ const AiCommandCenter = () => {
   };
 
   const insights = [
-    { label: 'Occupancy', value: '+12%', icon: <TrendingUp size={14} />, color: 'var(--action-primary)' },
-    { label: 'RevPAR', value: '+₹3,400', icon: <IndianRupee size={14} />, color: 'var(--action-accent)' },
-    { label: 'Demand', value: 'High', icon: <AlertCircle size={14} />, color: '#ef4444' }
+    { label: 'Occupancy', value: isLoadingMetrics ? '...' : `${metrics.occupancy}%`, icon: <TrendingUp size={14} />, color: 'var(--action-primary)' },
+    { label: 'RevPAR', value: isLoadingMetrics ? '...' : `₹${metrics.revpar.toLocaleString()}`, icon: <IndianRupee size={14} />, color: 'var(--action-accent)' },
+    { label: 'Demand', value: isLoadingMetrics ? '...' : metrics.demand, icon: <AlertCircle size={14} />, color: metrics.demand === 'High' ? '#ef4444' : metrics.demand === 'Medium' ? '#f59e0b' : '#10b981' }
   ];
 
   return (
