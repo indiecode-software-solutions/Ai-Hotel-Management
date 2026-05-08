@@ -61,6 +61,13 @@ create policy "Admins can manage rooms"
     exists (
       select 1 from public.users where id = auth.uid() and role = 'admin'
     )
+    or (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
+  )
+  with check (
+    exists (
+      select 1 from public.users where id = auth.uid() and role = 'admin'
+    )
+    or (auth.jwt() -> 'user_metadata' ->> 'role') = 'admin'
   );
 
 
