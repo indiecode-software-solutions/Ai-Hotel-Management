@@ -31,6 +31,26 @@ const MyStays = () => {
     fetchMyBookings();
   }, []);
 
+  useEffect(() => {
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.stay-reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [bookings, isLoading]); // Re-run when content changes
+
   const fetchMyBookings = async () => {
     setIsLoading(true);
     try {
@@ -130,14 +150,14 @@ const MyStays = () => {
 
       <main className="section-container pt-32 pb-20">
         <div className="max-w-5xl mx-auto px-6">
-          <header className="mb-16 reveal-on-scroll">
+          <header className="mb-16 stay-reveal">
             <span className="text-accent-gold text-xs font-bold uppercase tracking-[0.4em] mb-4 block">Guest History</span>
             <h2 className="text-6xl font-black text-white mb-4 tracking-tighter">My Stays</h2>
             <p className="text-gray-400 text-lg font-light max-w-xl leading-relaxed">Your collection of luxury escapes and upcoming heritage experiences, curated by AI.</p>
           </header>
 
           {/* Premium Glass Tabs */}
-          <div className="glass-tabs-container mb-12 reveal-on-scroll" style={{ animationDelay: '0.2s' }}>
+          <div className="glass-tabs-container mb-12 stay-reveal" style={{ transitionDelay: '0.2s' }}>
             <div className="glass-tabs-pill">
               <button 
                 onClick={() => setActiveTab('upcoming')}
@@ -157,7 +177,7 @@ const MyStays = () => {
           </div>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-32 gap-6 reveal-on-scroll">
+            <div className="flex flex-col items-center justify-center py-32 gap-6 stay-reveal">
               <div className="relative">
                 <Loader2 className="animate-spin text-accent-gold" size={64} />
                 <div className="absolute inset-0 blur-2xl bg-accent-gold/20 animate-pulse"></div>
@@ -165,7 +185,7 @@ const MyStays = () => {
               <p className="text-gray-400 font-medium tracking-widest uppercase text-xs">Syncing your luxury timeline...</p>
             </div>
           ) : displayBookings.length === 0 ? (
-            <div className="empty-state-card reveal-on-scroll" style={{ animationDelay: '0.4s' }}>
+            <div className="empty-state-card stay-reveal" style={{ transitionDelay: '0.4s' }}>
               <div className="empty-glow"></div>
               <Sparkles className="text-accent-gold mb-8 opacity-50" size={80} />
               <h3 className="text-3xl font-bold text-white mb-4">No sanctuaries found</h3>
@@ -179,8 +199,8 @@ const MyStays = () => {
               {displayBookings.map((booking, idx) => (
                 <div 
                   key={booking.id} 
-                  className="stay-card relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all hover:border-accent-gold/30 reveal-on-scroll"
-                  style={{ animationDelay: `${idx * 0.1}s` }}
+                  className="stay-card relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all hover:border-accent-gold/30 stay-reveal"
+                  style={{ transitionDelay: `${idx * 0.1}s` }}
                 >
                   <div className="flex flex-col md:flex-row">
                     {/* Media Section */}
@@ -383,12 +403,22 @@ const MyStays = () => {
         }
 
         @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
-        .reveal-on-scroll {
-          animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        
+        .stay-reveal {
           opacity: 0;
+          filter: blur(10px);
+          transform: translateY(30px);
+          transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+          will-change: transform, opacity, filter;
+        }
+
+        .stay-reveal.revealed {
+          opacity: 1;
+          filter: blur(0);
+          transform: translateY(0);
         }
       `}</style>
     </div>
