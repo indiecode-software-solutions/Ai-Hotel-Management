@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Sparkles, User, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Sparkles, User, Loader2, Mic } from 'lucide-react';
 import { chatWithAssistant } from '../../services/aiService';
 
 const AiChatWidget = () => {
@@ -9,7 +9,101 @@ const AiChatWidget = () => {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+  const inputRef = useRef('');
+
+  useEffect(() => {
+    inputRef.current = input;
+  }, [input]);
+
+  useEffect(() => {
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+
+      recognitionRef.current.onresult = (event) => {
+        let currentTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          currentTranscript += event.results[i][0].transcript;
+        }
+        setInput(currentTranscript);
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+    
+    // Pre-load voices
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
+
+  const speakResponse = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voices = window.speechSynthesis.getVoices();
+    
+    // Prioritize female UK voice for a premium feel
+    const femaleVoice = voices.find(v => 
+      v.name.includes('Google UK English Female') || 
+      (v.name.includes('Female') && v.lang.includes('en-GB')) ||
+      v.name.includes('Samantha') || 
+      v.name.includes('Victoria')
+    );
+    
+    if (femaleVoice) {
+      utterance.voice = femaleVoice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const startListening = (e) => {
+    e.preventDefault();
+    if (!recognitionRef.current) {
+      alert("Speech recognition is not supported in your browser.");
+      return;
+    }
+    try {
+      window.speechSynthesis.cancel(); // Stop talking if we start listening
+      setInput('');
+      recognitionRef.current.start();
+      setIsListening(true);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const stopListening = (e) => {
+    e.preventDefault();
+    if (!recognitionRef.current || !isListening) return;
+    try {
+      recognitionRef.current.stop();
+      setIsListening(false);
+      
+      // Auto-send after a brief delay to allow final transcript to settle
+      setTimeout(() => {
+        if (inputRef.current.trim()) {
+          handleSend(inputRef.current);
+        }
+      }, 500);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -19,11 +113,14 @@ const AiChatWidget = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || isTyping) return;
+  const handleSend = async (eOrText) => {
+    if (eOrText && eOrText.preventDefault) {
+      eOrText.preventDefault();
+    }
+    
+    const userMessage = typeof eOrText === 'string' ? eOrText.trim() : input.trim();
+    if (!userMessage || isTyping) return;
 
-    const userMessage = input.trim();
     setInput('');
     
     // Add user message to UI
@@ -63,6 +160,7 @@ const AiChatWidget = () => {
       }
       
       setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+      speakResponse(aiResponse);
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => [...prev, { role: 'assistant', content: 'I am sorry, I am having trouble connecting right now. Please try again later.' }]);
@@ -135,14 +233,26 @@ const AiChatWidget = () => {
         {/* Input Area */}
         <div className="ai-chat-input-area">
           <form onSubmit={handleSend} className="ai-chat-form">
+            <button 
+              type="button"
+              className={`ai-chat-mic-btn ${isListening ? 'listening' : ''}`}
+              onMouseDown={startListening}
+              onMouseUp={stopListening}
+              onMouseLeave={stopListening}
+              onTouchStart={startListening}
+              onTouchEnd={stopListening}
+              title="Hold to speak"
+            >
+              <Mic size={18} />
+            </button>
             <input 
               type="text" 
-              placeholder="Ask about rooms, bookings..." 
+              placeholder={isListening ? "Listening..." : "Ask about rooms, bookings..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isTyping}
             />
-            <button type="submit" disabled={!input.trim() || isTyping}>
+            <button type="submit" disabled={!input.trim() || isTyping} className="ai-chat-send-btn">
               <Send size={18} />
             </button>
           </form>
