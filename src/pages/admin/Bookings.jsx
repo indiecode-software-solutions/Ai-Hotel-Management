@@ -19,6 +19,9 @@ export const Bookings = () => {
   const [rooms, setRooms] = useState([]);
   const [users, setUsers] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNewGuest, setIsNewGuest] = useState(false);
+  const [newGuestName, setNewGuestName] = useState('');
+  const [newGuestEmail, setNewGuestEmail] = useState('');
   const [newBooking, setNewBooking] = useState({
     guest_id: '',
     room_id: '',
@@ -77,6 +80,9 @@ export const Bookings = () => {
 
   const openAddModal = async () => {
     setIsAddModalOpen(true);
+    setIsNewGuest(false);
+    setNewGuestName('');
+    setNewGuestEmail('');
     setNewBooking({
       guest_id: '',
       room_id: '',
@@ -102,15 +108,30 @@ export const Bookings = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
+      let finalGuestId = newBooking.guest_id;
+
+      if (isNewGuest) {
+        // Try to insert new guest into public.users
+        const { data: insertedGuest, error: guestError } = await supabase
+          .from('users')
+          .insert([{ full_name: newGuestName, email: newGuestEmail }])
+          .select()
+          .single();
+          
+        if (guestError) throw new Error("Failed to create new guest: " + guestError.message);
+        finalGuestId = insertedGuest.id;
+      }
+
       await bookingService.createBooking({
         ...newBooking,
+        guest_id: finalGuestId,
         total_price: Number(newBooking.total_price)
       });
       setIsAddModalOpen(false);
       fetchBookings(); // Refresh the list
     } catch (err) {
       console.error('Error creating booking:', err);
-      alert('Failed to create booking. Please make sure all fields are valid.');
+      alert(err.message || 'Failed to create booking. Please make sure all fields are valid.');
     } finally {
       setIsSubmitting(false);
     }
@@ -186,38 +207,63 @@ export const Bookings = () => {
 
       {/* Add Booking Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-elevated border border-subtle p-8 rounded-2xl w-full max-w-lg shadow-2xl relative">
+        <div className="admin-modal-overlay" onClick={(e) => e.target.className === 'admin-modal-overlay' && setIsAddModalOpen(false)}>
+          <div className="admin-modal-container">
             <button 
               onClick={() => setIsAddModalOpen(false)}
-              className="absolute top-6 right-6 text-muted hover:text-primary transition-colors"
+              className="admin-modal-close"
             >
               <X size={24} />
             </button>
             
-            <h2 className="text-3xl font-bold mb-6 text-primary">New Booking</h2>
+            <h2 className="admin-modal-title">New Booking</h2>
             
-            <form onSubmit={handleAddBookingSubmit} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">Guest</label>
-                <select 
-                  required
-                  className="w-full bg-base border border-subtle rounded-xl p-3 text-primary focus:border-accent outline-none"
-                  value={newBooking.guest_id}
-                  onChange={e => setNewBooking({...newBooking, guest_id: e.target.value})}
-                >
-                  <option value="">Select a guest...</option>
-                  {users.map(u => (
-                    <option key={u.id} value={u.id}>{u.full_name} ({u.email})</option>
-                  ))}
-                </select>
+            <form onSubmit={handleAddBookingSubmit}>
+              <div className="admin-form-group">
+                <div className="flex justify-between items-center mb-1">
+                  <label className="admin-form-label mb-0">Guest</label>
+                  <button type="button" className="text-xs text-accent hover:underline bg-transparent border-none p-0 cursor-pointer" onClick={() => setIsNewGuest(!isNewGuest)}>
+                    {isNewGuest ? "Select Existing Guest" : "+ Add New Guest"}
+                  </button>
+                </div>
+                
+                {isNewGuest ? (
+                  <div className="admin-form-row">
+                    <input 
+                      type="text" required
+                      className="admin-form-input"
+                      placeholder="Full Name"
+                      value={newGuestName}
+                      onChange={e => setNewGuestName(e.target.value)}
+                    />
+                    <input 
+                      type="email" required
+                      className="admin-form-input"
+                      placeholder="Email Address"
+                      value={newGuestEmail}
+                      onChange={e => setNewGuestEmail(e.target.value)}
+                    />
+                  </div>
+                ) : (
+                  <select 
+                    required={!isNewGuest}
+                    className="admin-form-select"
+                    value={newBooking.guest_id}
+                    onChange={e => setNewBooking({...newBooking, guest_id: e.target.value})}
+                  >
+                    <option value="">Select a guest...</option>
+                    {users.map(u => (
+                      <option key={u.id} value={u.id}>{u.full_name} ({u.email})</option>
+                    ))}
+                  </select>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">Room</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Room</label>
                 <select 
                   required
-                  className="w-full bg-base border border-subtle rounded-xl p-3 text-primary focus:border-accent outline-none"
+                  className="admin-form-select"
                   value={newBooking.room_id}
                   onChange={e => setNewBooking({...newBooking, room_id: e.target.value})}
                 >
@@ -228,40 +274,40 @@ export const Bookings = () => {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="admin-form-group admin-form-row">
                 <div>
-                  <label className="block text-sm font-medium text-muted mb-1">Check In</label>
+                  <label className="admin-form-label">Check In</label>
                   <input 
                     type="date" required
-                    className="w-full bg-base border border-subtle rounded-xl p-3 text-primary focus:border-accent outline-none"
+                    className="admin-form-input"
                     value={newBooking.check_in_date}
                     onChange={e => setNewBooking({...newBooking, check_in_date: e.target.value})}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-muted mb-1">Check Out</label>
+                  <label className="admin-form-label">Check Out</label>
                   <input 
                     type="date" required
-                    className="w-full bg-base border border-subtle rounded-xl p-3 text-primary focus:border-accent outline-none"
+                    className="admin-form-input"
                     value={newBooking.check_out_date}
                     onChange={e => setNewBooking({...newBooking, check_out_date: e.target.value})}
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-muted mb-1">Total Price (₹)</label>
+              <div className="admin-form-group">
+                <label className="admin-form-label">Total Price (₹)</label>
                 <input 
                   type="number" required min="0"
-                  className="w-full bg-base border border-subtle rounded-xl p-3 text-primary focus:border-accent outline-none"
+                  className="admin-form-input"
                   placeholder="e.g. 15000"
                   value={newBooking.total_price}
                   onChange={e => setNewBooking({...newBooking, total_price: e.target.value})}
                 />
               </div>
 
-              <div className="mt-4 flex justify-end gap-3">
-                <Button variant="outline" type="button" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+              <div className="admin-modal-actions">
+                <Button variant="ghost" type="button" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
                 <Button variant="primary" type="submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Saving...' : 'Confirm Booking'}
                 </Button>
