@@ -876,6 +876,9 @@
 }
 
 .ai-chat-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
   width: 360px;
   height: 500px;
   max-height: 80vh;

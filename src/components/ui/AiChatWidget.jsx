@@ -56,7 +56,7 @@ const AiChatWidget = () => {
         className={`ai-chat-fab ${isOpen ? 'hidden' : 'flex'}`}
         onClick={() => setIsOpen(true)}
       >
-        <Sparkles size={24} />
+        <MessageCircle size={24} />
       </button>
 
       {/* Chat Window */}
