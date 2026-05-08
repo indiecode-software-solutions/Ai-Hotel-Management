@@ -130,38 +130,49 @@ const MyStays = () => {
 
       <main className="section-container pt-32 pb-20">
         <div className="max-w-5xl mx-auto px-6">
-          <header className="mb-12">
-            <h2 className="text-5xl font-black text-white mb-4 tracking-tight">My Stays</h2>
-            <p className="text-gray-400 text-lg">Your collection of luxury escapes and upcoming heritage experiences.</p>
+          <header className="mb-16 reveal-on-scroll">
+            <span className="text-accent-gold text-xs font-bold uppercase tracking-[0.4em] mb-4 block">Guest History</span>
+            <h2 className="text-6xl font-black text-white mb-4 tracking-tighter">My Stays</h2>
+            <p className="text-gray-400 text-lg font-light max-w-xl leading-relaxed">Your collection of luxury escapes and upcoming heritage experiences, curated by AI.</p>
           </header>
 
-          {/* Tabs */}
-          <div className="flex gap-8 mb-10 border-b border-white/5 pb-4">
-            <button 
-              onClick={() => setActiveTab('upcoming')}
-              className={`text-xl font-bold transition-all flex items-center gap-2 ${activeTab === 'upcoming' ? 'text-accent-gold' : 'text-gray-500 hover:text-gray-300'}`}
-            >
-              <Ticket size={24} /> Upcoming Stays
-            </button>
-            <button 
-              onClick={() => setActiveTab('past')}
-              className={`text-xl font-bold transition-all flex items-center gap-2 ${activeTab === 'past' ? 'text-accent-gold' : 'text-gray-500 hover:text-gray-300'}`}
-            >
-              <History size={24} /> Past History
-            </button>
+          {/* Premium Glass Tabs */}
+          <div className="glass-tabs-container mb-12 reveal-on-scroll" style={{ animationDelay: '0.2s' }}>
+            <div className="glass-tabs-pill">
+              <button 
+                onClick={() => setActiveTab('upcoming')}
+                className={`tab-btn ${activeTab === 'upcoming' ? 'active' : ''}`}
+              >
+                <Ticket size={18} />
+                <span>Upcoming Stays</span>
+              </button>
+              <button 
+                onClick={() => setActiveTab('past')}
+                className={`tab-btn ${activeTab === 'past' ? 'active' : ''}`}
+              >
+                <History size={18} />
+                <span>Past History</span>
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <Loader2 className="animate-spin text-accent-gold" size={48} />
-              <p className="text-gray-400 animate-pulse">Syncing your luxury timeline...</p>
+            <div className="flex flex-col items-center justify-center py-32 gap-6 reveal-on-scroll">
+              <div className="relative">
+                <Loader2 className="animate-spin text-accent-gold" size={64} />
+                <div className="absolute inset-0 blur-2xl bg-accent-gold/20 animate-pulse"></div>
+              </div>
+              <p className="text-gray-400 font-medium tracking-widest uppercase text-xs">Syncing your luxury timeline...</p>
             </div>
           ) : displayBookings.length === 0 ? (
-            <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/5">
-              <Sparkles className="mx-auto text-accent-gold mb-6 opacity-30" size={64} />
-              <h3 className="text-2xl font-bold text-white mb-2">No bookings found</h3>
-              <p className="text-gray-400 mb-8">Your next sanctuary is waiting to be discovered.</p>
-              <Button variant="accent" onClick={() => navigate('/search')}>Explore Destinations</Button>
+            <div className="empty-state-card reveal-on-scroll" style={{ animationDelay: '0.4s' }}>
+              <div className="empty-glow"></div>
+              <Sparkles className="text-accent-gold mb-8 opacity-50" size={80} />
+              <h3 className="text-3xl font-bold text-white mb-4">No sanctuaries found</h3>
+              <p className="text-gray-400 mb-10 max-w-md mx-auto text-lg">Your next legendary stay is just a search away. Let our AI find your perfect match.</p>
+              <button className="explore-btn" onClick={() => navigate('/search')}>
+                Explore Destinations <ChevronRight size={20} />
+              </button>
             </div>
           ) : (
             <div className="flex flex-col gap-8">
@@ -283,16 +294,100 @@ const MyStays = () => {
         .bg-accent-gold { background-color: var(--accent-gold); }
         .border-accent-gold { border-color: var(--accent-gold); }
         
+        .glass-tabs-container {
+          display: flex;
+          justify-content: flex-start;
+        }
+
+        .glass-tabs-pill {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          padding: 6px;
+          border-radius: 100px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          display: flex;
+          gap: 4px;
+        }
+
+        .tab-btn {
+          padding: 10px 24px;
+          border-radius: 100px;
+          border: none;
+          background: transparent;
+          color: var(--text-muted);
+          font-weight: 600;
+          font-size: 0.85rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .tab-btn:hover {
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+          background: var(--text-primary);
+          color: var(--surface-base);
+          box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .empty-state-card {
+          position: relative;
+          padding: 80px 40px;
+          text-align: center;
+          background: rgba(255, 255, 255, 0.02);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 40px;
+          overflow: hidden;
+        }
+
+        .empty-glow {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+          pointer-events: none;
+        }
+
+        .explore-btn {
+          background: transparent;
+          border: 1px solid var(--accent-gold);
+          color: var(--accent-gold);
+          padding: 14px 32px;
+          border-radius: 100px;
+          font-weight: 700;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 0 auto;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .explore-btn:hover {
+          background: var(--accent-gold);
+          color: var(--surface-base);
+          box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+        }
+
         .stay-card:hover .card-image {
           transform: scale(1.1) !important;
         }
 
         @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }
         }
         .reveal-on-scroll {
-          animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
       `}</style>
