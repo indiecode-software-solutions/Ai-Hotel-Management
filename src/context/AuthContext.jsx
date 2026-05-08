@@ -51,7 +51,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signUpWithEmail = async (email, password, options = {}) => {
-    return await supabase.auth.signUp({ email, password, options });
+    return await supabase.auth.signUp({ 
+      email, 
+      password, 
+      options: {
+        ...options,
+        emailRedirectTo: window.location.origin,
+      }
+    });
   };
 
   const signInWithGoogle = async () => {

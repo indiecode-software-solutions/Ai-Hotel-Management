@@ -120,14 +120,16 @@ const GuestLanding = () => {
           <Link to="/onboarding" className="partner-link">Partnership</Link>
           {user ? (
             <>
-              <button className="guest-auth-btn" onClick={() => navigate('/my-stays')}>My Stays</button>
+              <button className="guest-auth-btn" onClick={() => navigate('/my-stays')}>
+                <Heart size={14} /> My Stays
+              </button>
               {user.user_metadata?.role === 'admin' && (
                 <button className="guest-auth-btn" onClick={() => navigate('/admin')}>Dashboard</button>
               )}
-              <button className="guest-auth-btn" onClick={signOut} style={{background: 'transparent', border: '1px solid var(--accent-gold)', color: 'var(--accent-gold)'}}>Sign Out</button>
+              <button className="guest-auth-btn outline" onClick={signOut}>Sign Out</button>
             </>
           ) : (
-            <button className="guest-auth-btn" onClick={() => setIsAuthModalOpen(true)}>Sign In</button>
+            <button className="guest-auth-btn primary" onClick={() => setIsAuthModalOpen(true)}>Sign In</button>
           )}
           <button 
             className="mobile-menu-toggle" 
