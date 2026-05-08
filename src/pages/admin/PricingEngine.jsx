@@ -31,13 +31,17 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts';
-import { generateAiResponse } from '../../services/aiService';
+import { generateAiResponse, analyzePricing } from '../../services/aiService';
+import { roomService } from '../../services/roomService';
+import { bookingService } from '../../services/bookingService';
 
 const PricingEngine = () => {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [intelligenceBriefing, setIntelligenceBriefing] = useState("");
   const [isLoadingBriefing, setIsLoadingBriefing] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiSuggestions, setAiSuggestions] = useState(null);
 
   // Mock data localized for India (Rates in USD but higher scale for luxury or can use INR context)
   const comparisonData = [
@@ -94,6 +98,39 @@ const PricingEngine = () => {
     }, 3000);
   };
 
+  const handleAnalyzeMarket = async () => {
+    setIsAnalyzing(true);
+    try {
+      const [rooms, bookings] = await Promise.all([
+        roomService.getRooms(),
+        bookingService.getAllBookings()
+      ]);
+
+      const occupancyData = rooms.map(room => {
+        const roomBookings = bookings.filter(b => b.room_id === room.id);
+        const activeBookings = roomBookings.filter(b => ['confirmed', 'checked_in'].includes(b.status)).length;
+        return {
+          room: room.title || room.type,
+          occupancy: activeBookings > 0 ? 'High' : 'Low',
+          bookings: activeBookings
+        };
+      });
+
+      const simulatedTrends = [
+        { area: 'Orchha', trend: 'Rising', reason: 'Cultural Festival nearby' },
+        { area: 'General', trend: 'Stable', reason: 'Weekday' }
+      ];
+
+      const result = await analyzePricing(occupancyData, simulatedTrends);
+      setAiSuggestions(result);
+      if (result.summary) setIntelligenceBriefing(result.summary);
+    } catch (error) {
+      console.error('Error analyzing market:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="pricing-engine-container">
@@ -125,7 +162,7 @@ const PricingEngine = () => {
           {/* Main Chart: Current vs Recommended */}
           <Card variant="glass" className="chart-card relative overflow-hidden group">
             <div 
-              className="absolute center-absolute transition-all transform group-hover:scale-110"
+              className="absolute center-absolute transition-all transform hover-scale"
               style={{ opacity: 0.04, color: 'var(--text-accent)' }}
             >
               <BarChart3 size={180} />
@@ -221,11 +258,21 @@ const PricingEngine = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-accent opacity-5 blur-3xl rounded-full"></div>
             
             <div className="relative z-10 flex flex-col h-full">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="ai-icon-box-static">
-                  <Zap size={20} className="text-surface-base" />
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="ai-icon-box-static">
+                    <Zap size={20} className="text-surface-base" />
+                  </div>
+                  <h3 className="text-xl font-bold text-primary">Intelligence Briefing</h3>
                 </div>
-                <h3 className="text-xl font-bold text-primary">Intelligence Briefing</h3>
+                <button 
+                  onClick={handleAnalyzeMarket}
+                  disabled={isAnalyzing}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg text-xs font-bold transition-all border border-accent/20"
+                >
+                  {isAnalyzing ? <Loader2 className="animate-spin" size={14} /> : <Sparkles size={14} />}
+                  ANALYZE MARKET
+                </button>
               </div>
 
               <div className="flex-1">
@@ -246,16 +293,24 @@ const PricingEngine = () => {
               </div>
 
               <div className="mt-8 pt-6 border-t border-default">
-                <h4 className="text-xs font-bold text-muted uppercase tracking-widest mb-4">Key Indian Opportunity</h4>
+                <h4 className="text-xs font-bold text-muted uppercase tracking-widest mb-4">
+                  {aiSuggestions ? 'AI Strategy Insight' : 'Key Indian Opportunity'}
+                </h4>
                 <div className="flex items-center justify-between bg-overlay p-4 rounded-xl border-default">
                   <div className="flex items-center gap-3">
-                    <Flame className="text-danger" size={18} />
+                    {aiSuggestions ? <Sparkles className="text-accent" size={18} /> : <Flame className="text-danger" size={18} />}
                     <div>
-                      <p className="text-sm font-bold text-primary">Pongal Harvest Surge</p>
-                      <p className="text-xs text-muted">Jan 14 - Jan 18</p>
+                      <p className="text-sm font-bold text-primary">
+                        {aiSuggestions ? 'Revenue Maximization Tip' : 'Pongal Harvest Surge'}
+                      </p>
+                      <p className="text-xs text-muted">
+                        {aiSuggestions ? aiSuggestions.tip : 'Jan 14 - Jan 18'}
+                      </p>
                     </div>
                   </div>
-                  <Badge status="success">+32% RevPAR Potential</Badge>
+                  <Badge status="success">
+                    {aiSuggestions ? (aiSuggestions.adjustments[0]?.adjustment || '+15%') : '+32% RevPAR Potential'}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -326,11 +381,12 @@ const PricingEngine = () => {
                         style={{ height: '100%', backgroundColor: getHeatColor(item.heat) }}
                       ></div>
                       <div 
-                        className="absolute bottom-0 w-4 rounded-full shadow-soft transition-all duration-700 group-hover/item:w-6 group-hover/item:shadow-2xl"
+                        className="absolute bottom-0 w-4 rounded-full shadow-soft transition-all duration-700 timeline-bar"
                         style={{ 
                           height: `${item.heat}%`, 
                           backgroundColor: getHeatColor(item.heat),
-                          boxShadow: `0 0 20px ${getHeatColor(item.heat)}66`
+                          boxShadow: `0 0 20px ${getHeatColor(item.heat)}66`,
+                          color: getHeatColor(item.heat)
                         }}
                       ></div>
                     </div>
@@ -449,9 +505,18 @@ const PricingEngine = () => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .pricing-engine-container {
           animation: pageEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .chart-card:hover .hover-scale {
+          transform: translate(-50%, -50%) scale(1.1) !important;
+        }
+
+        .timeline-item:hover .timeline-bar {
+          width: 24px !important;
+          box-shadow: 0 0 30px currentColor !important;
         }
 
         .bento-grid {

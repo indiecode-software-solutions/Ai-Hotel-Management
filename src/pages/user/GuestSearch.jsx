@@ -6,22 +6,9 @@ import '../../styles/guest.css';
 import { generateAiResponse } from '../../services/aiService';
 import RajHeritageGlobe from '../../components/ui/RajHeritageGlobe';
 import BookingModal from '../../features/booking/BookingModal';
-import prop1 from '../../assets/Rajmahal (1).jpg';
-import prop2 from '../../assets/Lawn.jpeg';
-import prop3 from '../../assets/Full View.jpg';
-import prop4 from '../../assets/Rajmahal (3).jpg';
-import prop5 from '../../assets/Drone View 1.jpg';
-import prop6 from '../../assets/Pool Side View.jpeg';
-
-// Mock Database
-const MOCK_PROPERTIES = [
-  { id: 1, title: 'Raj Mahal', location: 'Orchha, Madhya Pradesh', price: '₹24,500', image: prop1, amenities: ['Heritage View', 'Infinity Pool', 'Ayurvedic Spa'], vibe: 'Heritage', rating: 4.9, coordinates: [25.3500, 78.6400] },
-  { id: 2, title: 'Raj Vila', location: 'Orchha, Madhya Pradesh', price: '₹18,200', image: prop2, amenities: ['Lush Gardens', 'Private Plunge Pool', 'Riverside Yoga'], vibe: 'Nature', rating: 4.8, coordinates: [25.3520, 78.6420] },
-  { id: 3, title: 'Raj Mahal The Palace', location: 'Orchha, Madhya Pradesh', price: '₹32,890', image: prop3, amenities: ['Royal Suite', 'Fine Dining', 'Elite Butler'], vibe: 'Heritage', rating: 4.9, coordinates: [25.3510, 78.6410] },
-  { id: 4, title: 'Betwa Retreat', location: 'Orchha, Madhya Pradesh', price: '₹12,500', image: prop4, amenities: ['River View', 'Tent Stay', 'Cultural Walk'], vibe: 'Nature', rating: 4.6, coordinates: [25.3490, 78.6380] },
-  { id: 5, title: 'Sheesh Mahal', location: 'Orchha, Madhya Pradesh', price: '₹22,000', image: prop5, amenities: ['Palace Decor', 'Museum Access', 'Royal Dining'], vibe: 'Heritage', rating: 4.7, coordinates: [25.3505, 78.6405] },
-  { id: 6, title: 'Bundelkhand Riverside', location: 'Orchha, Madhya Pradesh', price: '₹28,480', image: prop6, amenities: ['Riverfront', 'Private Ghat', 'History Tours'], vibe: 'Heritage', rating: 4.8, coordinates: [25.3480, 78.6370] },
-];
+import AuthModal from '../../components/auth/AuthModal';
+import { useAuth } from '../../context/AuthContext';
+import { roomService } from '../../services/roomService';
 
 const VIBES = ['All', 'Heritage', 'Nature', 'Urban'];
 
@@ -33,20 +20,49 @@ const GuestSearch = () => {
   const [activeVibe, setActiveVibe] = useState('All');
   const [isThinking, setIsThinking] = useState(false);
   const [aiResponse, setAiResponse] = useState(null);
-  const [filteredProperties, setFilteredProperties] = useState(MOCK_PROPERTIES);
+  const [allProperties, setAllProperties] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState([]);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
-    if (initialQuery) {
-      handleSearch(initialQuery);
-    } else {
-      filterProperties('All');
-    }
-  }, []); // Run once on mount
+    fetchProperties();
+  }, []);
 
-  const filterProperties = (vibe) => {
-    let result = MOCK_PROPERTIES;
+  const fetchProperties = async () => {
+    try {
+      setIsLoading(true);
+      const data = await roomService.getRooms();
+      // Map Supabase data to the UI format if necessary
+      const formattedData = data.map(p => ({
+        ...p,
+        title: p.title || p.type, // Fallback if title is missing
+        price: `₹${Number(p.base_price).toLocaleString('en-IN')}`,
+        image: p.image_url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80',
+        rating: p.rating || 4.5,
+        vibe: p.vibe || 'Heritage',
+        coordinates: [p.latitude || 25.3500, p.longitude || 78.6400]
+      }));
+      setAllProperties(formattedData);
+      
+      if (initialQuery) {
+        handleSearch(initialQuery, formattedData);
+      } else {
+        applyFilter('All', formattedData);
+      }
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const applyFilter = (vibe, data = allProperties) => {
+    let result = data;
     if (vibe !== 'All') {
       result = result.filter(p => p.vibe === vibe);
     }
@@ -55,13 +71,13 @@ const GuestSearch = () => {
 
   const handleVibeClick = (vibe) => {
     setActiveVibe(vibe);
-    filterProperties(vibe);
+    applyFilter(vibe);
   };
 
-  const handleSearch = async (searchQuery) => {
+  const handleSearch = async (searchQuery, data = allProperties) => {
     const q = typeof searchQuery === 'string' ? searchQuery : query;
     if (!q.trim()) {
-      filterProperties(activeVibe);
+      applyFilter(activeVibe, data);
       return;
     }
 
@@ -70,14 +86,13 @@ const GuestSearch = () => {
     setAiResponse(null);
 
     // We pass the context of our properties to the AI
-    const context = `Available properties: ${MOCK_PROPERTIES.map(p => `${p.title} in ${p.location} (Vibe: ${p.vibe})`).join(', ')}.`;
+    const context = `Available properties: ${data.map(p => `${p.title} in ${p.location} (Vibe: ${p.vibe})`).join(', ')}.`;
     const prompt = `The user is looking for: "${q}". Which of our available properties do you suggest and why?`;
 
     try {
       const response = await generateAiResponse(prompt, context);
       setAiResponse(response);
       
-      // Attempt to auto-select vibe based on query if it matches one
       const lowerQ = q.toLowerCase();
       let matchedVibe = activeVibe;
       if (lowerQ.includes('heritage') || lowerQ.includes('culture') || lowerQ.includes('palace')) matchedVibe = 'Heritage';
@@ -88,19 +103,18 @@ const GuestSearch = () => {
         setActiveVibe(matchedVibe);
       }
 
-      // If AI specifically mentions properties, show them. Otherwise filter by vibe.
-      const mentionedProperties = MOCK_PROPERTIES.filter(p => response.includes(p.title));
+      const mentionedProperties = data.filter(p => response.includes(p.title));
       
       if (mentionedProperties.length > 0) {
         setFilteredProperties(mentionedProperties);
       } else {
-        filterProperties(matchedVibe !== 'All' ? matchedVibe : activeVibe);
+        applyFilter(matchedVibe !== 'All' ? matchedVibe : activeVibe, data);
       }
 
     } catch (error) {
       console.error(error);
       setAiResponse("I apologize, something went wrong while finding the perfect match.");
-      filterProperties(activeVibe);
+      applyFilter(activeVibe, data);
     } finally {
       setIsThinking(false);
     }
@@ -132,7 +146,16 @@ const GuestSearch = () => {
         </div>
 
         <div className="search-navbar-right">
-          <button className="guest-auth-btn">Sign In</button>
+          {user ? (
+            <>
+              {user.user_metadata?.role === 'admin' && (
+                <Link to="/admin" className="guest-auth-btn" style={{textDecoration: 'none'}}>Dashboard</Link>
+              )}
+              <button className="guest-auth-btn" onClick={signOut} style={{background: 'transparent', border: '1px solid var(--accent-gold)', color: 'var(--accent-gold)'}}>Sign Out</button>
+            </>
+          ) : (
+            <button className="guest-auth-btn" onClick={() => setIsAuthModalOpen(true)}>Sign In</button>
+          )}
         </div>
       </nav>
 
@@ -173,7 +196,7 @@ const GuestSearch = () => {
             <div className="filters-scroll">
               {VIBES.map(vibe => (
                 <button 
-                  key={vibe} 
+                   key={vibe} 
                   className={`vibe-btn ${activeVibe === vibe ? 'active' : ''}`}
                   onClick={() => handleVibeClick(vibe)}
                 >
@@ -185,7 +208,12 @@ const GuestSearch = () => {
 
           {/* Property Grid */}
           <div className="search-results-grid">
-            {filteredProperties.length > 0 ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-20 w-full col-span-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mb-4"></div>
+                <p className="text-muted">Fetching live inventory...</p>
+              </div>
+            ) : filteredProperties.length > 0 ? (
               filteredProperties.map(hotel => (
                 <div key={hotel.id} className="search-property-card">
                   <div className="search-property-media">
@@ -201,8 +229,8 @@ const GuestSearch = () => {
                     </div>
                     <div className="info-bottom">
                       <div className="amenities-preview">
-                        {hotel.amenities.slice(0, 1).map((a, i) => <span key={i}>{a}</span>)}
-                        {hotel.amenities.length > 1 && <span className="more-tag">+{hotel.amenities.length - 1}</span>}
+                        {(hotel.amenities || []).slice(0, 1).map((a, i) => <span key={i}>{a}</span>)}
+                        {(hotel.amenities || []).length > 1 && <span className="more-tag">+{(hotel.amenities || []).length - 1}</span>}
                       </div>
                       <div className="rating">★ {hotel.rating}</div>
                     </div>
@@ -221,7 +249,7 @@ const GuestSearch = () => {
             ) : (
               <div className="no-results">
                 <p>No properties match your current criteria.</p>
-                <button className="reset-btn" onClick={() => { setQuery(''); setActiveVibe('All'); filterProperties('All'); }}>Reset Filters</button>
+                <button className="reset-btn" onClick={() => { setQuery(''); setActiveVibe('All'); applyFilter('All'); }}>Reset Filters</button>
               </div>
             )}
           </div>
@@ -238,6 +266,11 @@ const GuestSearch = () => {
         isOpen={isBookingOpen} 
         onClose={() => setIsBookingOpen(false)} 
         hotel={selectedHotel}
+      />
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
       />
     </div>
   );

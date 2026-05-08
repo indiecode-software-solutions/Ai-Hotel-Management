@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, Calendar, ArrowRight, CheckCircle2, Loader2, Plane, Hotel, MapPin, Users, DollarSign, CloudSun, Send, Plus, Trash2, Edit3, Cloud } from 'lucide-react';
 import '../../styles/guest.css';
+import { generateAiResponse } from '../../services/aiService';
 import plannerHero from '../../assets/Drone View.jpg';
 import day1Img from '../../assets/Rajmahal (2).jpg';
 import day5Img from '../../assets/Drone View Pool Side.jpg';
@@ -22,55 +23,74 @@ const AITripPlanner = () => {
 
   const [newActivityInputs, setNewActivityInputs] = useState({});
 
-  const handleGenerate = () => {
+  const iconMap = {
+    hotel: Hotel,
+    plane: Plane,
+    mapPin: MapPin,
+    calendar: Calendar,
+    sparkles: Sparkles
+  };
+
+  const handleGenerate = async () => {
     if (!prompt.trim()) return;
     setIsGenerating(true);
     setItinerary(null);
     
-    // Mock API call to simulate AI generation
-    setTimeout(() => {
-      setIsGenerating(false);
-      setItinerary({
-        destination: "Hampi & Coorg, South India",
-        duration: `${duration} Days`,
-        vibe: `${selectedStyle} & Heritage`,
-        guests: `${guests} Travelers`,
-        costEstimate: "₹85,000 - ₹1,20,000",
-        weather: "72°F (Mist)",
-        heroImage: plannerHero,
-        days: [
+    try {
+      const systemPrompt = `You are a luxury travel planner for Raj Heritage Hospitality. 
+      Generate a detailed travel itinerary in JSON format.
+      The JSON must follow this exact structure:
+      {
+        "destination": "Name of destination",
+        "duration": "Number of Days (e.g., 5 Days)",
+        "vibe": "Travel Style (e.g., Luxury, Adventure)",
+        "guests": "Number of Travelers",
+        "costEstimate": "Estimated cost in INR (e.g., ₹85,000)",
+        "weather": "Current weather vibe (e.g., 72°F Mist)",
+        "days": [
           {
-            day: "Day 1-3: Heritage Hampi",
-            activities: [
-              "Check-in at The Royal Heritage (Luxury Temple Suite)", 
-              "Sunrise Coracle Ride in Tungabhadra River", 
-              "Private Tour of Virupaksha & Vitthala Temple Complex"
-            ],
-            icon: <Hotel className="text-accent" size={20} />,
-            image: day1Img
-          },
-          {
-            day: "Day 4: The Transit",
-            activities: [
-              "Private Luxury SUV Drive to Coorg", 
-              "Stopover at Belur & Halebidu Hoysala Temples", 
-              "Evening Arrival at Coorg Mist Villas & Estate Walk"
-            ],
-            icon: <Plane className="text-accent" size={20} />
-          },
-          {
-            day: "Day 5-7: Mist & Coffee Coorg",
-            activities: [
-              "Coffee Plantation Estate Tour with Cupping Session", 
-              "Sunset Trek to Mandalpatti Peak with Private Jeep", 
-              "Traditional Kodava Cuisine Experience at the Villa"
-            ],
-            icon: <MapPin className="text-accent" size={20} />,
-            image: day5Img
+            "day": "Day X: Title",
+            "activities": ["Activity 1", "Activity 2"],
+            "icon": "hotel" | "plane" | "mapPin"
           }
         ]
+      }
+      Focus on South India (Karnataka, Hyderabad) destinations like Coorg, Hampi, Mysore, or Gokarna.
+      Return ONLY the raw JSON string without any markdown formatting or extra text.`;
+
+      const userMessage = `Create a ${duration}-day ${selectedStyle} trip for ${guests} people based on this prompt: "${prompt}"`;
+      
+      const response = await generateAiResponse(userMessage, systemPrompt);
+      
+      if (response.includes("Raj Heritage network is currently experiencing high demand")) {
+        throw new Error("AI Service unavailable");
+      }
+
+      // Clean the response if AI wraps it in markdown blocks
+      const jsonStart = response.indexOf('{');
+      const jsonEnd = response.lastIndexOf('}') + 1;
+      
+      if (jsonStart === -1 || jsonEnd === 0) {
+        throw new Error("Invalid AI response format");
+      }
+
+      const cleanJson = response.substring(jsonStart, jsonEnd);
+      const data = JSON.parse(cleanJson);
+      
+      setItinerary({
+        ...data,
+        heroImage: plannerHero,
+        days: data.days.map((day, idx) => ({
+          ...day,
+          image: idx === 0 ? day1Img : (idx === data.days.length - 1 ? day5Img : null)
+        }))
       });
-    }, 2500);
+    } catch (error) {
+      console.error("AI Generation Error:", error);
+      // Fallback to a basic itinerary or error state if needed
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleStartManual = () => {
@@ -86,19 +106,57 @@ const AITripPlanner = () => {
         {
           day: "Day 1",
           activities: [],
-          icon: <MapPin className="text-accent" size={20} />
+          icon: "mapPin"
         }
       ]
     });
   };
 
-  const handleAdjust = () => {
-    if (!adjustPrompt.trim()) return;
+  const handleAdjust = async () => {
+    if (!adjustPrompt.trim() || !itinerary) return;
     setIsAdjusting(true);
-    setTimeout(() => {
-      setIsAdjusting(false);
+    try {
+      const systemPrompt = `You are a luxury travel planner for Raj Heritage Hospitality. 
+      The user wants to adjust their current itinerary.
+      Return the COMPLETELY UPDATED itinerary in the same JSON format as before.
+      
+      Current Itinerary:
+      ${JSON.stringify(itinerary, null, 2)}
+
+      Return ONLY the raw JSON string.`;
+
+      const userMessage = `Adjust the itinerary based on this request: "${adjustPrompt}"`;
+      
+      const response = await generateAiResponse(userMessage, systemPrompt);
+      
+      if (response.includes("Raj Heritage network is currently experiencing high demand")) {
+        throw new Error("AI Service unavailable");
+      }
+
+      const jsonStart = response.indexOf('{');
+      const jsonEnd = response.lastIndexOf('}') + 1;
+      
+      if (jsonStart === -1 || jsonEnd === 0) {
+        throw new Error("Invalid AI response format");
+      }
+
+      const cleanJson = response.substring(jsonStart, jsonEnd);
+      const data = JSON.parse(cleanJson);
+      
+      setItinerary({
+        ...data,
+        heroImage: plannerHero,
+        days: data.days.map((day, idx) => ({
+          ...day,
+          image: idx === 0 ? day1Img : (idx === data.days.length - 1 ? day5Img : null)
+        }))
+      });
       setAdjustPrompt('');
-    }, 1500);
+    } catch (error) {
+      console.error("AI Adjustment Error:", error);
+    } finally {
+      setIsAdjusting(false);
+    }
   };
 
   // Manual Editing Functions
@@ -122,7 +180,7 @@ const AITripPlanner = () => {
     updatedItinerary.days.push({
       day: `Day ${updatedItinerary.days.length + 1}`,
       activities: [],
-      icon: <MapPin className="text-accent" size={20} />
+      icon: "mapPin"
     });
     setItinerary(updatedItinerary);
   };
@@ -278,48 +336,51 @@ const AITripPlanner = () => {
               
               <div className="itinerary-body">
                 <div className="itinerary-timeline manual-enabled">
-                  {itinerary.days.map((day, idx) => (
-                    <div key={idx} className="timeline-day stagger-item reveal-active" style={{animationDelay: `${idx * 0.1}s`}}>
-                      <div className="day-icon">{day.icon}</div>
-                      <div className="day-content">
-                        <input 
-                          className="editable-day-title" 
-                          value={day.day} 
-                          onChange={(e) => {
-                            const updated = {...itinerary};
-                            updated.days[idx].day = e.target.value;
-                            setItinerary(updated);
-                          }}
-                        />
-                        <ul className="editable-activities">
-                          {day.activities.map((act, i) => (
-                            <li key={i}>
-                              <CheckCircle2 size={14} className="text-accent flex-shrink-0" /> 
-                              <span>{act}</span>
-                              <button className="delete-act-btn" onClick={() => removeActivity(idx, i)}><Trash2 size={14}/></button>
-                            </li>
-                          ))}
-                        </ul>
-                        
-                        <div className="add-activity-row">
+                  {itinerary.days.map((day, idx) => {
+                    const DayIcon = iconMap[day.icon] || MapPin;
+                    return (
+                      <div key={idx} className="timeline-day stagger-item reveal-active" style={{animationDelay: `${idx * 0.1}s`}}>
+                        <div className="day-icon"><DayIcon size={20} className="text-accent" /></div>
+                        <div className="day-content">
                           <input 
-                            type="text" 
-                            placeholder="Add manual activity..." 
-                            value={newActivityInputs[idx] || ''}
-                            onChange={(e) => setNewActivityInputs({...newActivityInputs, [idx]: e.target.value})}
-                            onKeyDown={(e) => e.key === 'Enter' && addActivity(idx)}
+                            className="editable-day-title" 
+                            value={day.day} 
+                            onChange={(e) => {
+                              const updated = {...itinerary};
+                              updated.days[idx].day = e.target.value;
+                              setItinerary(updated);
+                            }}
                           />
-                          <button onClick={() => addActivity(idx)}><Plus size={16}/></button>
-                        </div>
-
-                        {day.image && (
-                          <div className="day-image">
-                            <img src={day.image} alt={day.day} />
+                          <ul className="editable-activities">
+                            {day.activities.map((act, i) => (
+                              <li key={i}>
+                                <CheckCircle2 size={14} className="text-accent flex-shrink-0" /> 
+                                <span>{act}</span>
+                                <button className="delete-act-btn" onClick={() => removeActivity(idx, i)}><Trash2 size={14}/></button>
+                              </li>
+                            ))}
+                          </ul>
+                          
+                          <div className="add-activity-row">
+                            <input 
+                              type="text" 
+                              placeholder="Add manual activity..." 
+                              value={newActivityInputs[idx] || ''}
+                              onChange={(e) => setNewActivityInputs({...newActivityInputs, [idx]: e.target.value})}
+                              onKeyDown={(e) => e.key === 'Enter' && addActivity(idx)}
+                            />
+                            <button onClick={() => addActivity(idx)}><Plus size={16}/></button>
                           </div>
-                        )}
+  
+                          {day.image && (
+                            <div className="day-image">
+                              <img src={day.image} alt={day.day} />
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   
                   <div className="add-day-container">
                     <button className="add-day-btn" onClick={addNewDay}>

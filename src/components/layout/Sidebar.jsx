@@ -7,13 +7,15 @@ import {
   Tags,
   MessageSquareQuote,
   Settings,
-  Globe
+  Globe,
+  BedDouble
 } from 'lucide-react';
 
 export const Sidebar = () => {
   const navItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
     { name: 'Bookings', icon: <CalendarDays size={20} />, path: '/admin/bookings' },
+    { name: 'Room Manager', icon: <BedDouble size={20} />, path: '/admin/rooms' },
     { name: 'Guests', icon: <Users size={20} />, path: '/admin/guests' },
     { name: 'Pricing Engine', icon: <Tags size={20} />, path: '/admin/pricing' },
     { name: 'Reviews', icon: <MessageSquareQuote size={20} />, path: '/admin/reviews' },

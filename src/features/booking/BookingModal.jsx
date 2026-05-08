@@ -1,12 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Calendar, Users, ChevronRight, Check, Sparkles, Plane, Coffee, Wind, Shield, ArrowLeft } from 'lucide-react';
+import { X, Calendar, Users, ChevronRight, Check, Sparkles, Plane, Coffee, Wind, Shield, ArrowLeft, Loader2, CreditCard, Lock } from 'lucide-react';
 import './booking.css';
+import { roomService } from '../../services/roomService';
+import { bookingService } from '../../services/bookingService';
+import { useAuth } from '../../context/AuthContext';
 import room1 from '../../assets/Super Deluxe Room.jpeg';
 import room2 from '../../assets/DSC00831 (1).JPG';
 import room3 from '../../assets/Garden.png';
 
 const BookingModal = ({ hotel, isOpen, onClose }) => {
+  const { user } = useAuth();
   const [step, setStep] = useState(1);
+  const [rooms, setRooms] = useState([]);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState('pending'); // 'pending', 'processing', 'success'
   const [formData, setFormData] = useState({
     checkIn: '',
     checkOut: '',
@@ -22,32 +30,39 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
     { id: 1, label: 'Stay Details' },
     { id: 2, label: 'Sanctuary' },
     { id: 3, label: 'Enhancements' },
-    { id: 4, label: 'Review' }
+    { id: 4, label: 'Review' },
+    { id: 5, label: 'Checkout' }
   ];
 
-  const roomTypes = [
-    {
-      id: 'temple-suite',
-      name: 'Temple View Suite',
-      description: 'Ancient temple skyline view with private balcony',
-      price: 18500,
-      image: room1
-    },
-    {
-      id: 'royal-heritage',
-      name: 'Royal Heritage Wing',
-      description: 'Authentic palace experience with private butler',
-      price: 32000,
-      image: room2
-    },
-    {
-      id: 'estate-villa',
-      name: 'Estate Villa',
-      description: 'Private coffee estate access & infinity pool',
-      price: 24850,
-      image: room3
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      fetchRooms();
+    } else {
+      document.body.style.overflow = 'unset';
     }
-  ];
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
+
+  const fetchRooms = async () => {
+    setIsLoadingRooms(true);
+    try {
+      const data = await roomService.getRooms({ status: 'available' });
+      setRooms(data);
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+    } finally {
+      setIsLoadingRooms(false);
+    }
+  };
+
+  const roomTypes = rooms.map(room => ({
+    id: room.id,
+    name: room.title || room.type,
+    description: Array.isArray(room.amenities) ? room.amenities.join(', ') : room.type,
+    price: room.base_price,
+    image: room.image_url || room1
+  }));
 
   const addons = [
     {
@@ -80,18 +95,15 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
     }
   ];
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
-  const nextStep = () => setStep(prev => Math.min(prev + 1, 4));
+  const nextStep = () => {
+    if (step === 4) {
+      setStep(5);
+      return;
+    }
+    setStep(prev => Math.min(prev + 1, 5));
+  };
   const prevStep = () => setStep(prev => Math.max(prev - 1, 1));
 
   const toggleAddon = (addon) => {
@@ -109,6 +121,68 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
     let total = formData.roomType ? formData.roomType.price : 0;
     formData.addons.forEach(a => total += a.price);
     return total;
+  };
+
+  const handlePayment = async () => {
+    if (!user) {
+      alert('Please log in to proceed.');
+      return;
+    }
+
+    if (!window.Razorpay) {
+      alert('Payment system is loading. Please wait or refresh.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    const totalAmount = calculateTotal();
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: totalAmount * 100, // Amount in paise
+      currency: "INR",
+      name: "Raj Heritage Hospitality",
+      description: `Reservation for ${formData.roomType?.name}`,
+      image: "https://uukigchhhmmiocsxwhyc.supabase.co/storage/v1/object/public/hotel-assets/logo.png",
+      handler: async function (response) {
+        setPaymentStatus('processing');
+        try {
+          const bookingData = {
+            guest_id: user.id,
+            room_id: formData.roomType.id,
+            check_in_date: formData.checkIn,
+            check_out_date: formData.checkOut,
+            total_price: totalAmount,
+            status: 'confirmed',
+            payment_id: response.razorpay_payment_id
+          };
+
+          await bookingService.createBooking(bookingData);
+          setPaymentStatus('success');
+          setIsSubmitting(false);
+        } catch (error) {
+          console.error('Error finalizing booking:', error);
+          alert('Payment successful, but booking failed. Please contact support.');
+          setIsSubmitting(false);
+        }
+      },
+      prefill: {
+        name: user.full_name || "",
+        email: user.email || "",
+        contact: ""
+      },
+      theme: {
+        color: "#d4af37"
+      },
+      modal: {
+        ondismiss: function() {
+          setIsSubmitting(false);
+        }
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
   };
 
   const renderStep = () => {
@@ -163,22 +237,33 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
           <div className="step-enter">
             <h3 className="step-title">Select your Sanctuary</h3>
             <div className="room-options-grid">
-              {roomTypes.map(room => (
-                <div 
-                  key={room.id} 
-                  className={`room-card ${formData.roomType?.id === room.id ? 'selected' : ''}`}
-                  onClick={() => setFormData({...formData, roomType: room})}
-                >
-                  <div className="room-media">
-                    <img src={room.image} alt={room.name} />
-                  </div>
-                  <div className="room-info">
-                    <h4>{room.name}</h4>
-                    <p>{room.description}</p>
-                    <div className="room-price">₹{room.price.toLocaleString()} <small>/night</small></div>
-                  </div>
+              {isLoadingRooms ? (
+                <div className="loading-state">
+                  <Loader2 className="animate-spin text-accent" size={40} />
+                  <p>Unveiling your sanctuaries...</p>
                 </div>
-              ))}
+              ) : roomTypes.length === 0 ? (
+                <div className="empty-state">
+                  <p>No sanctuaries available for your selected dates.</p>
+                </div>
+              ) : (
+                roomTypes.map(room => (
+                  <div 
+                    key={room.id} 
+                    className={`room-card ${formData.roomType?.id === room.id ? 'selected' : ''}`}
+                    onClick={() => setFormData({...formData, roomType: room})}
+                  >
+                    <div className="room-media">
+                      <img src={room.image} alt={room.name} />
+                    </div>
+                    <div className="room-info">
+                      <h4>{room.name}</h4>
+                      <p>{room.description}</p>
+                      <div className="room-price">₹{room.price.toLocaleString()} <small>/night</small></div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         );
@@ -214,7 +299,7 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
       case 4:
         return (
           <div className="step-enter">
-            <h3 className="step-title">Confirm Your Stay</h3>
+            <h3 className="step-title">Review Your Sanctuary</h3>
             <div className="summary-card">
               <div className="summary-section">
                 <div className="summary-item">
@@ -251,6 +336,64 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
             </div>
           </div>
         );
+      case 5:
+        return (
+          <div className="step-enter payment-step">
+            {paymentStatus === 'success' ? (
+              <div className="payment-success-state">
+                <div className="success-icon-wrap">
+                  <Check size={40} />
+                </div>
+                <h3>Reservation Confirmed!</h3>
+                <p>Your payment was successful and your sanctuary is waiting.</p>
+                <div className="success-details">
+                  <div className="detail-row">
+                    <span>Amount Paid</span>
+                    <span>₹{calculateTotal().toLocaleString()}</span>
+                  </div>
+                  <div className="detail-row">
+                    <span>Booking ID</span>
+                    <span>#{Math.random().toString(36).substr(2, 9).toUpperCase()}</span>
+                  </div>
+                </div>
+                <button className="btn-done" onClick={onClose}>Return to Home</button>
+              </div>
+            ) : (
+              <>
+                <h3 className="step-title">Secure Checkout</h3>
+                <div className="checkout-breakdown">
+                  <div className="checkout-item">
+                    <span>{formData.roomType?.name} (Base Price)</span>
+                    <span>₹{formData.roomType?.price.toLocaleString()}</span>
+                  </div>
+                  {formData.addons.map(a => (
+                    <div key={a.id} className="checkout-item addon">
+                      <span>{a.name}</span>
+                      <span>₹{a.price.toLocaleString()}</span>
+                    </div>
+                  ))}
+                  <div className="checkout-total">
+                    <span>Total Amount</span>
+                    <span>₹{calculateTotal().toLocaleString()}</span>
+                  </div>
+                </div>
+                
+                <div className="payment-security">
+                  <Lock size={16} />
+                  <span>Secured by Razorpay. 256-bit SSL Encryption.</span>
+                </div>
+
+                <div className="payment-methods-preview">
+                  <CreditCard size={24} />
+                  <div className="method-labels">
+                    <span>UPI, Cards, Netbanking</span>
+                    <small>Test Environment Enabled</small>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        );
       default:
         return null;
     }
@@ -282,33 +425,43 @@ const BookingModal = ({ hotel, isOpen, onClose }) => {
           {renderStep()}
         </div>
 
-        <div className="booking-modal-footer">
-          <div className="total-estimate">
-            <span className="total-label">Estimated Total</span>
-            <span className="total-amount">₹{calculateTotal().toLocaleString()}</span>
+        {paymentStatus !== 'success' && (
+          <div className="booking-modal-footer">
+            <div className="total-estimate">
+              <span className="total-label">Final Amount</span>
+              <span className="total-amount">₹{calculateTotal().toLocaleString()}</span>
+            </div>
+            
+            <div className="footer-actions">
+              {step > 1 && !isSubmitting && (
+                <button className="btn-back" onClick={prevStep}>
+                  <ArrowLeft size={18} /> Back
+                </button>
+              )}
+              {step < 5 ? (
+                <button 
+                  className="btn-next" 
+                  onClick={nextStep}
+                  disabled={step === 2 && !formData.roomType}
+                >
+                  {step === 4 ? 'Proceed to Checkout' : 'Continue'} <ChevronRight size={18} />
+                </button>
+              ) : (
+                <button 
+                  className="btn-next btn-confirm" 
+                  onClick={handlePayment}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <><Loader2 className="animate-spin" size={18} /> Processing...</>
+                  ) : (
+                    <>Pay ₹{calculateTotal().toLocaleString()} <CreditCard size={18} /></>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
-          
-          <div className="footer-actions">
-            {step > 1 && (
-              <button className="btn-back" onClick={prevStep}>
-                <ArrowLeft size={18} /> Back
-              </button>
-            )}
-            {step < 4 ? (
-              <button 
-                className="btn-next" 
-                onClick={nextStep}
-                disabled={step === 2 && !formData.roomType}
-              >
-                Continue <ChevronRight size={18} />
-              </button>
-            ) : (
-              <button className="btn-next btn-confirm" onClick={onClose}>
-                Confirm Reservation <Check size={18} />
-              </button>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

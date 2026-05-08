@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Search, ArrowRight, MapPin, Globe, ShieldCheck, Heart, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
 import '../../styles/guest.css';
-import { generateAiResponse } from '../../services/aiService';
 import BookingModal from '../../features/booking/BookingModal';
 import AITripPlanner from '../../components/user/AITripPlanner';
+import AuthModal from '../../components/auth/AuthModal';
+import { useAuth } from '../../context/AuthContext';
 import poolHero from '../../assets/Pool Side1.jpeg';
 import hampiImg from '../../assets/Entrance Gate.jpeg';
 import coorgImg from '../../assets/Drone View Pool Side.jpg';
@@ -20,6 +20,9 @@ const GuestLanding = () => {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -115,7 +118,17 @@ const GuestLanding = () => {
         </div>
         <div className="navbar-right">
           <Link to="/onboarding" className="partner-link">Partnership</Link>
-          <button className="guest-auth-btn">Sign In</button>
+          {user ? (
+            <>
+              <button className="guest-auth-btn" onClick={() => navigate('/my-stays')}>My Stays</button>
+              {user.user_metadata?.role === 'admin' && (
+                <button className="guest-auth-btn" onClick={() => navigate('/admin')}>Dashboard</button>
+              )}
+              <button className="guest-auth-btn" onClick={signOut} style={{background: 'transparent', border: '1px solid var(--accent-gold)', color: 'var(--accent-gold)'}}>Sign Out</button>
+            </>
+          ) : (
+            <button className="guest-auth-btn" onClick={() => setIsAuthModalOpen(true)}>Sign In</button>
+          )}
           <button 
             className="mobile-menu-toggle" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -153,9 +166,9 @@ const GuestLanding = () => {
               <span className="link-num">03</span>
               <span className="link-text">Philosophy</span>
             </a>
-            <Link to="/onboarding" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/my-stays" className="mobile-nav-link" onClick={() => setIsMenuOpen(false)}>
               <span className="link-num">04</span>
-              <span className="link-text">Partnership</span>
+              <span className="link-text">My Stays</span>
             </Link>
           </nav>
 
@@ -165,7 +178,11 @@ const GuestLanding = () => {
               <span>Twitter</span>
               <span>LinkedIn</span>
             </div>
-            <button className="mobile-auth-btn">Sign In to Raj Heritage</button>
+            {user ? (
+              <button className="mobile-auth-btn" onClick={signOut}>Sign Out</button>
+            ) : (
+              <button className="mobile-auth-btn" onClick={() => { setIsAuthModalOpen(true); setIsMenuOpen(false); }}>Sign In to Raj Heritage</button>
+            )}
           </div>
         </div>
       </div>
@@ -326,6 +343,11 @@ const GuestLanding = () => {
         isOpen={isBookingOpen} 
         onClose={() => setIsBookingOpen(false)} 
         hotel={selectedHotel}
+      />
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
       />
     </div>
   );
