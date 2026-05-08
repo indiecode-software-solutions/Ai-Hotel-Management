@@ -42,8 +42,10 @@ const PricingEngine = () => {
   const [isLoadingBriefing, setIsLoadingBriefing] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [isLoadingChart, setIsLoadingChart] = useState(true);
 
-  // Mock data localized for India (Rates in USD but higher scale for luxury or can use INR context)
+  // Fallback mock data if API fails
   const comparisonData = [
     { room: 'Raj Mahal', current: 15000, recommended: 20500 },
     { room: 'Raj Vila', current: 28000, recommended: 38500 },
@@ -87,7 +89,36 @@ const PricingEngine = () => {
         setIsLoadingBriefing(false);
       }
     };
+    
+    const fetchRoomsForChart = async () => {
+      try {
+        const rooms = await roomService.getRooms();
+        if (rooms && rooms.length > 0) {
+          // Generate dynamic chart data based on real rooms (max 5 for clean chart)
+          const dynamicChartData = rooms.slice(0, 5).map(room => {
+            const currentPrice = room.price_per_night || 10000;
+            // Apply a dynamic markup between 15% and 35% to simulate AI recommendation
+            const randomMarkupFactor = 1.15 + (Math.random() * 0.20); 
+            // Round to nearest 500 for clean looking numbers
+            const recommendedPrice = Math.ceil((currentPrice * randomMarkupFactor) / 500) * 500;
+            
+            return {
+              room: room.title || room.type,
+              current: currentPrice,
+              recommended: recommendedPrice
+            };
+          });
+          setChartData(dynamicChartData);
+        }
+      } catch (error) {
+        console.error('Error fetching rooms for pricing chart:', error);
+      } finally {
+        setIsLoadingChart(false);
+      }
+    };
+
     fetchBriefing();
+    fetchRoomsForChart();
   }, []);
 
   const handleApplyOptimization = () => {
@@ -187,8 +218,13 @@ const PricingEngine = () => {
               </div>
 
               <div style={{ height: 300, width: '100%' }}>
+                {isLoadingChart ? (
+                  <div className="flex justify-center items-center h-full">
+                    <Loader2 className="animate-spin text-accent opacity-50" size={32} />
+                  </div>
+                ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={comparisonData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }} barGap={12}>
+                  <BarChart data={chartData.length > 0 ? chartData : comparisonData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }} barGap={12}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
                     <XAxis 
                       dataKey="room" 
@@ -243,12 +279,13 @@ const PricingEngine = () => {
                       radius={[6, 6, 0, 0]} 
                       barSize={40}
                     >
-                      {comparisonData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={index === 3 ? 'var(--text-accent)' : 'var(--action-accent)'} />
+                      {(chartData.length > 0 ? chartData : comparisonData).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={index === (chartData.length > 0 ? chartData.length - 1 : 3) ? 'var(--text-accent)' : 'var(--action-accent)'} />
                       ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
+                )}
               </div>
             </div>
           </Card>
