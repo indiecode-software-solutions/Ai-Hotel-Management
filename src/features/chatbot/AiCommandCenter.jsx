@@ -104,8 +104,8 @@ const AiCommandCenter = () => {
           <Sparkles size={20} color="var(--surface-base)" className={isThinking ? 'animate-pulse' : ''} />
         </div>
         <div>
-          <h2 className="text-primary font-extrabold mb-0 text-2xl">AI Command Center</h2>
-          <p className="text-muted mb-0 text-sm">Interactive Intelligence at your service</p>
+          <h2 className="text-primary font-extrabold mb-0 text-2xl ai-text-shadow">AI Command Center</h2>
+          <p className="text-muted mb-0 text-sm ai-sub-shadow">Interactive Intelligence at your service</p>
         </div>
       </div>
 
